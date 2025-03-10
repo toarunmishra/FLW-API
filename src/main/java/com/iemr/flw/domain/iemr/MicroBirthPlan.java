@@ -9,17 +9,15 @@ import java.math.BigInteger;
 @Table(name = "t_micro_birth_plan", schema = "db_iemr")
 @Data
 public class MicroBirthPlan {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "user_id")
-    private Integer UserId;
+    private Integer userId;
 
     @Column(name = "ben_id")
     private Long benId;
-
 
     @Column(name = "contact_no_1", length = 10)
     private String contactNumber1; // Auto-filled, must be 10 digits, starts with 6-9
