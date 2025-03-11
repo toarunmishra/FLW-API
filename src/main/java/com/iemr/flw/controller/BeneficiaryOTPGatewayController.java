@@ -27,14 +27,14 @@ public class BeneficiaryOTPGatewayController {
 
     @Operation(summary = "Send OTP")
     @RequestMapping(value = "/sendOTP", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
-    public String  sendOTP(@RequestParam String phoneNumber, @RequestHeader String Authorization) throws Exception {
+    public String  sendOTP(@RequestParam String phoneNumber) throws Exception {
         logger.info(phoneNumber);
 
         OutputResponse response = new OutputResponse();
 
         try {
 
-            String success = otpHandler.sendOTP(phoneNumber,Authorization);
+            String success = otpHandler.sendOTP(phoneNumber,"");
             logger.info(success.toString());
             if (success.contains("otp"))
                 response.setResponse(success);

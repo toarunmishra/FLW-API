@@ -204,7 +204,7 @@ public class OTPHandlerServiceImpl implements OTPHandler {
 
 //		Random random = new Random();
         Random random = SecureRandom.getInstanceStrong();
-        int otp = 1000 + random.nextInt(9999);
+        int otp = 100000 + random.nextInt(900000);
 
         generatedPassword = getEncryptedOTP(otp);
 
