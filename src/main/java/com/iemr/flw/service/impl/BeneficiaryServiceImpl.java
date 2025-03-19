@@ -154,7 +154,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
                     benImageOBJ = new RMNCHMBeneficiaryImage();
                     benAddressOBJ = new RMNCHMBeneficiaryaddress();
                     benContactOBJ = new RMNCHMBeneficiarycontact();
-
+                    Map<String, Object> healthDetails = getBenHealthDetails(m.getBenRegId());
                     if (m.getBenDetailsId() != null) {
                         benDetailsOBJ = beneficiaryRepo.getDetailsById(m.getBenDetailsId());
                     }
@@ -376,7 +376,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
                         resultMap.put("bornbirthDeatils", new HashMap<String, Object>());
 
                     resultMap.put("beneficiaryDetails", benDetailsRMNCH_OBJ);
-
+                    resultMap.put("abhaHealthDetails", healthDetails);
                     resultMap.put("houseoldId", benDetailsRMNCH_OBJ.getHouseoldId());
                     resultMap.put("benficieryid", benDetailsRMNCH_OBJ.getBenficieryid());
                     resultMap.put("BenRegId", m.getBenRegId());
@@ -410,7 +410,23 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         return gson.toJson(response);
     }
 
-    public void fetchHealthIdByBenRegID(Long benRegID, String authorization, Map<String, Object> resultMap) {
+	private Map<String, Object> getBenHealthDetails(BigInteger benRegId) {
+		Map<String, Object> healthDetails = new HashMap<>();
+		if (null != benRegId) {
+			String benHealthIdNumber = beneficiaryRepo.getBenHealthIdNumber(benRegId);
+			if (null != benHealthIdNumber) {
+				ArrayList<Object[]> health = beneficiaryRepo.getBenHealthDetails(benHealthIdNumber);
+				for (Object[] objects : health) {
+					healthDetails.put("HealthID", objects[0]);
+					healthDetails.put("HealthIdNumber", objects[1]);
+					healthDetails.put("isNewAbha", objects[2]);
+				}
+			}
+		}
+		return healthDetails;
+	}
+
+	public void fetchHealthIdByBenRegID(Long benRegID, String authorization, Map<String, Object> resultMap) {
         Map<String, Long> requestMap = new HashMap<String, Long>();
         requestMap.put("beneficiaryRegID", benRegID);
         requestMap.put("beneficiaryID", null);
