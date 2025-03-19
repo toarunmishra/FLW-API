@@ -59,7 +59,6 @@ public class AshaProfileImpl implements AshaProfileService {
                     employeeMasterInter.getUserDetails(userID),
                     "User details not found for ID: " + userID
             );
-
             AshaWorker ashaWorker = new AshaWorker();
             ashaWorker.setEmployeeId(m_user.getUserID());
             ashaWorker.setDob(m_user.getDOB());

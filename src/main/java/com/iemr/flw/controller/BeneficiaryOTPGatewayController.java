@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.ws.rs.core.MediaType;
 
 @RestController
-@RequestMapping("/beneficiary")
+@RequestMapping(value = "/beneficiary",headers = "Authorization")
 public class BeneficiaryOTPGatewayController {
     final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 

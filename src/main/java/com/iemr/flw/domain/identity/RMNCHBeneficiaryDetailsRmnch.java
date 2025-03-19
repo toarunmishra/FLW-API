@@ -471,4 +471,5 @@ public class RMNCHBeneficiaryDetailsRmnch {
 	@Column(name = "noOfDaysForDelivery")
 	private Integer noOfDaysForDelivery;
 
+
 }

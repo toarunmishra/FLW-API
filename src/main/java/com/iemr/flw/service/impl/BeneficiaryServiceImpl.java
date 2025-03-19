@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.iemr.flw.utils.CookieUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
@@ -44,6 +49,11 @@ import com.iemr.flw.repo.identity.HouseHoldRepo;
 import com.iemr.flw.service.BeneficiaryService;
 import com.iemr.flw.utils.config.ConfigProperties;
 import com.iemr.flw.utils.http.HttpUtils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Service
 @Qualifier("rmnchServiceImpl")
@@ -59,7 +69,8 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
     @Autowired
     private HouseHoldRepo houseHoldRepo;
-
+    @Autowired
+    private CookieUtil cookieUtil;
 
     @Override
     public String getBenData(GetBenRequestHandler request, String authorisation) throws Exception {
@@ -93,12 +104,21 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
                         outputResponse = getMappingsForAddressIDs(resultSet, totalPage, authorisation);
                     }
                 } else {
+                    logger.error("Invalid page no");
+
                     // page no not invalid
                     throw new Exception("Invalid page no");
+
                 }
-            } else
+            } else {
+                logger.error("Invalid/missing village details");
+
                 throw new Exception("Invalid/missing village details");
+            }
+
+
         } catch (Exception e) {
+            logger.info("Exception->>" + e.getMessage());
             throw new Exception(e.getMessage());
         }
 
@@ -163,6 +183,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
                         if (benDetailsRMNCH_OBJ != null && benDetailsRMNCH_OBJ.getHouseoldId() != null)
                             benHouseHoldRMNCH_ROBJ = houseHoldRepo
                                     .getByHouseHoldID(benDetailsRMNCH_OBJ.getHouseoldId());
+                        logger.info("HouseholdData:" + houseHoldRepo.getByHouseHoldID(benDetailsRMNCH_OBJ.getHouseoldId()));
 
                     }
                     if (benDetailsRMNCH_OBJ == null)
@@ -173,7 +194,6 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
                         benDetailsRMNCH_OBJ.setMotherName(benDetailsOBJ.getMotherName());
                     if (benDetailsOBJ.getLiteracyStatus() != null)
                         benDetailsRMNCH_OBJ.setLiteracyStatus(benDetailsOBJ.getLiteracyStatus());
-
 
 
                     // bank
@@ -339,6 +359,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
                     }
 
                     benDetailsRMNCH_OBJ.setAgeFull(ageDetails);
+
                     benDetailsRMNCH_OBJ.setAge(age_val);
                     if (ageUnit != null)
                         benDetailsRMNCH_OBJ.setAge_unit(ageUnit);

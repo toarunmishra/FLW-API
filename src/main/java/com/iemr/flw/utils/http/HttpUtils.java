@@ -83,6 +83,7 @@ public class HttpUtils {
 		if (header.containsKey(HttpHeaders.AUTHORIZATION)) {
 			headers.add(HttpHeaders.AUTHORIZATION, header.get(HttpHeaders.AUTHORIZATION).toString());
 		}
+
 		HttpEntity<String> requestEntity = new HttpEntity<String>(data, headers);
 		ResponseEntity<String> responseEntity = rest.exchange(uri, HttpMethod.POST, requestEntity, String.class);
 		setStatus((HttpStatus) responseEntity.getStatusCode());

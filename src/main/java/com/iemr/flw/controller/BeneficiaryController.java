@@ -25,6 +25,7 @@ public class BeneficiaryController {
     public String getBeneficiaryDataByAsha(@RequestBody GetBenRequestHandler requestDTO,
                                            @RequestHeader(value = "Authorization") String authorization) {
         OutputResponse response = new OutputResponse();
+        logger.info("beneficiary response:"+response);
         try {
             if (requestDTO != null) {
                 logger.info("request object with timestamp : " + new Timestamp(System.currentTimeMillis()) + " "
@@ -33,12 +34,16 @@ public class BeneficiaryController {
                 if (s != null)
                     response.setResponse(s);
                 else
-                    response.setError(5000, "No record found");
+                    logger.error("No record found");
+
+                response.setError(5000, "No record found");
             } else
-                response.setError(5000, "Invalid/NULL request obj");
+                logger.error("Invalid/NULL request obj");
+
+            response.setError(5000, "Invalid/NULL request obj");
         } catch (Exception e) {
-            logger.error("Error in get data : " + e);
-            response.setError(5000, "Error in get data : " + e);
+            logger.error("Error in get data : " + e.getMessage());
+            response.setError(5000, "Error in get data : " + e.getMessage());
         }
         return response.toString();
 
