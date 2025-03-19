@@ -73,5 +73,8 @@ public class DiseaseControl {
     @Column(name = "typeId")
     private BigInteger diseaseTypeId;
 
+    @Column(name = "otherFields")
+    private String  otherFields;
+
 
 }

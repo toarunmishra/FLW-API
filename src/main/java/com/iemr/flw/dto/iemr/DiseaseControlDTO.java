@@ -1,6 +1,7 @@
 package com.iemr.flw.dto.iemr;
 
 import lombok.Data;
+import org.json.JSONObject;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
@@ -44,6 +45,8 @@ public class DiseaseControlDTO {
     private String MedicineSideEffect;
 
     private BigInteger diseaseTypeId;
+
+    private String  otherFields;
 
 
 }
