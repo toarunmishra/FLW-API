@@ -2,23 +2,17 @@ package com.iemr.flw.service.impl;
 
 import com.iemr.flw.domain.iemr.AshaWorker;
 import com.iemr.flw.domain.iemr.M_User;
+import com.iemr.flw.dto.iemr.AshaWorkerDTO;
 import com.iemr.flw.repo.iemr.AshaProfileRepo;
-import com.iemr.flw.repo.iemr.EmployeeMasterRepo;
 import com.iemr.flw.service.AshaProfileService;
 import com.iemr.flw.service.EmployeeMasterInter;
-import com.iemr.flw.utils.JwtAuthenticationUtil;
-import com.iemr.flw.utils.JwtUtil;
-import com.iemr.flw.utils.exception.IEMRException;
-import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class AshaProfileImpl implements AshaProfileService {
@@ -26,26 +20,17 @@ public class AshaProfileImpl implements AshaProfileService {
     AshaProfileRepo ashaProfileRepo;
     @Autowired
     EmployeeMasterInter employeeMasterInter;
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
-    @Autowired
-    private EmployeeMasterRepo userLoginRepo;
-    @Autowired
-    JwtUtil jwtUtil;
-
-    @Autowired
-    JwtAuthenticationUtil jwtAuthenticationUtil ;
 
     private final Logger logger = LoggerFactory.getLogger(AshaProfileImpl.class);
 
     @Transactional
     @Override
-    public AshaWorker saveEditData(AshaWorker ashaWorkerRequest) {
+    public AshaWorker saveEditData(AshaWorkerDTO ashaWorkerRequest) {
         try {
             Objects.requireNonNull(ashaWorkerRequest, "ashaWorker must not be null");
             AshaWorker savedWorker = ashaWorkerRequest.getId() != null
                     ? ashaProfileRepo.saveAndFlush(updateProfile(ashaWorkerRequest))
-                    : ashaProfileRepo.saveAndFlush(ashaWorkerRequest);
+                    : ashaProfileRepo.saveAndFlush(saveProfile(ashaWorkerRequest));
             logger.info("ASHA worker profile saved successfully: {}", savedWorker);
             return savedWorker;
         } catch (Exception e) {
@@ -56,17 +41,14 @@ public class AshaProfileImpl implements AshaProfileService {
     }
 
     @Override
-    public AshaWorker getProfileData(String authorization) {
+    public AshaWorker getProfileData(Integer employeeId) {
 
         try {
-            Integer userId = jwtUtil.extractUserId(authorization);
-
-            Objects.requireNonNull(userId, "employeeId must not be null");
-            return ashaProfileRepo.findByEmployeeId(userId)
-                    .orElseGet(() -> {
-                        return getDetails(userId);
-                    });
+            Objects.requireNonNull(employeeId, "employeeId must not be null");
+            return ashaProfileRepo.findByEmployeeId(employeeId)
+                    .orElseGet(() -> getDetails(employeeId));
         } catch (Exception e) {
+            logger.error("Error retrieving ASHA worker profile for employeeId {}: {}", employeeId, e.getMessage(), e);
             throw new RuntimeException("Failed to retrieve ASHA worker profile", e);
         }
     }
@@ -97,7 +79,7 @@ public class AshaProfileImpl implements AshaProfileService {
     }
 
 
-    private AshaWorker updateProfile(AshaWorker editAshaWorkerRequest) {
+    private AshaWorker updateProfile(AshaWorkerDTO editAshaWorkerRequest) {
         System.out.println(editAshaWorkerRequest.toString());
         try {
             Objects.requireNonNull(editAshaWorkerRequest, "editEmployee must not be null");
@@ -139,6 +121,44 @@ public class AshaProfileImpl implements AshaProfileService {
 
     }
 
+    private AshaWorker saveProfile(AshaWorkerDTO saveAshaWorkerRequest) {
+        System.out.println(saveAshaWorkerRequest.toString());
+        try {
+            Objects.requireNonNull(saveAshaWorkerRequest, "SaveEmployee must not be null");
+            logger.debug("Saving ASHA worker profile: {}", saveAshaWorkerRequest);
+            AshaWorker saveAshaProfiledata = new AshaWorker();
+            saveAshaProfiledata.setAbhaNumber(saveAshaWorkerRequest.getAbhaNumber());
+            saveAshaProfiledata.setEmployeeId(saveAshaWorkerRequest.getEmployeeId());
+            saveAshaProfiledata.setDob(saveAshaWorkerRequest.getDob());
+            saveAshaProfiledata.setAlternateMobileNumber(saveAshaWorkerRequest.getAlternateMobileNumber());
+            saveAshaProfiledata.setAnm1Mobile(saveAshaWorkerRequest.getAnm1Mobile());
+            saveAshaProfiledata.setAnm2Name(saveAshaWorkerRequest.getAnm2Name());
+            saveAshaProfiledata.setIfsc(saveAshaWorkerRequest.getIfsc());
+            saveAshaProfiledata.setAwwName(saveAshaWorkerRequest.getAwwName());
+            saveAshaProfiledata.setName(saveAshaWorkerRequest.getName());
+            saveAshaProfiledata.setVillage(saveAshaWorkerRequest.getVillage());
+            saveAshaProfiledata.setBankAccount(saveAshaWorkerRequest.getBankAccount());
+            saveAshaProfiledata.setChoName(saveAshaWorkerRequest.getChoName());
+            saveAshaProfiledata.setChoMobile(saveAshaWorkerRequest.getChoMobile());
+            saveAshaProfiledata.setAbhaNumber(saveAshaWorkerRequest.getAbhaNumber());
+            saveAshaProfiledata.setAshaFamilyMember(saveAshaWorkerRequest.getAshaFamilyMember());
+            saveAshaProfiledata.setDateOfJoining(saveAshaWorkerRequest.getDateOfJoining());
+            saveAshaProfiledata.setMobileNumber(saveAshaWorkerRequest.getMobileNumber());
+            saveAshaProfiledata.setAshaHouseholdRegistration(saveAshaWorkerRequest.getAshaHouseholdRegistration());
+            saveAshaProfiledata.setFatherOrSpouseName(saveAshaWorkerRequest.getFatherOrSpouseName());
+            saveAshaProfiledata.setPopulationCovered(saveAshaWorkerRequest.getPopulationCovered());
+            saveAshaProfiledata.setAnm1Name(saveAshaWorkerRequest.getAnm1Name());
+            saveAshaProfiledata.setAnm2Mobile(saveAshaWorkerRequest.getAnm2Mobile());  // Corrected line
+            saveAshaProfiledata.setAwwMobile(saveAshaWorkerRequest.getAwwMobile());
+            saveAshaProfiledata.setProviderServiceMapID(saveAshaWorkerRequest.getProviderServiceMapID());
+            return saveAshaProfiledata;
+
+        } catch (Exception e) {
+            logger.error("Error creating updated ASHA worker profile: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to create updated ASHA worker profile", e);
+
+        }
 
 
+    }
 }

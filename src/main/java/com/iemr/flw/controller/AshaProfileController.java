@@ -2,6 +2,7 @@ package com.iemr.flw.controller;
 
 import com.iemr.flw.domain.iemr.AshaWorker;
 import com.iemr.flw.domain.iemr.M_User;
+import com.iemr.flw.dto.iemr.AshaWorkerDTO;
 import com.iemr.flw.dto.iemr.UserServiceRoleDTO;
 import com.iemr.flw.repo.iemr.UserServiceRoleRepo;
 import com.iemr.flw.service.AshaProfileService;
@@ -35,7 +36,7 @@ public class AshaProfileController {
 
     @RequestMapping(value = "editProfile", method = {RequestMethod.POST}, produces = {
             "application/json"}, consumes = "application/json")
-    public ResponseEntity<Map<String, Object>> editEmployee(@RequestBody AshaWorker editEmployee,@RequestHeader(value = "Authorization") String authorization) {
+    public ResponseEntity<Map<String, Object>> editEmployee(@RequestBody AshaWorkerDTO editEmployee, @RequestHeader(value = "Authorization") String authorization) {
 
         try {
             System.out.println(editEmployee.toString());
