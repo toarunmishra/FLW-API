@@ -57,17 +57,17 @@ public class AshaProfileController {
     }
 
     @RequestMapping(value = "getProfile", method = RequestMethod.GET, headers = "Authorization")
-    public ResponseEntity<Map<String, Object>> getProfile(@RequestHeader("Authorization") String  authorization) throws IEMRException {
+    public ResponseEntity<Map<String, Object>> getProfile(@CookieValue(value = "jwtToken", required = false) String jwtToken) throws IEMRException {
         try {
-            AshaWorker ashaWorker = ashaProfileService.getProfileData(authorization);
+            AshaWorker ashaWorker = ashaProfileService.getProfileData(jwtToken);
             if (ashaWorker != null) {
                 response.put("data", ashaWorker);
                 response.put("statusCode", 200);
                 response.put("status", "Success");
             } else {
                 response.put("data", ashaWorker);
-                response.put("statusCode", 200);
-                response.put("status", "Success");
+                response.put("statusCode", 404);
+                response.put("status", "Fail");
                 response.put("errorMessage", "Asha profile not found");
             }
 

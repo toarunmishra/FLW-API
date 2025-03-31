@@ -6,6 +6,8 @@ import com.iemr.flw.dto.iemr.AshaWorkerDTO;
 import com.iemr.flw.repo.iemr.AshaProfileRepo;
 import com.iemr.flw.service.AshaProfileService;
 import com.iemr.flw.service.EmployeeMasterInter;
+import com.iemr.flw.utils.JwtUtil;
+import com.iemr.flw.utils.exception.IEMRException;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +22,8 @@ public class AshaProfileImpl implements AshaProfileService {
     AshaProfileRepo ashaProfileRepo;
     @Autowired
     EmployeeMasterInter employeeMasterInter;
-
+    @Autowired
+    JwtUtil jwtUtil;
     private final Logger logger = LoggerFactory.getLogger(AshaProfileImpl.class);
 
     @Transactional
@@ -41,14 +44,14 @@ public class AshaProfileImpl implements AshaProfileService {
     }
 
     @Override
-    public AshaWorker getProfileData(Integer employeeId) {
+    public AshaWorker getProfileData(String  jwtToken) throws IEMRException {
+        Integer userId = jwtUtil.extractUserId(jwtToken);
 
         try {
-            Objects.requireNonNull(employeeId, "employeeId must not be null");
-            return ashaProfileRepo.findByEmployeeId(employeeId)
-                    .orElseGet(() -> getDetails(employeeId));
+            Objects.requireNonNull(userId, "employeeId must not be null");
+            return ashaProfileRepo.findByEmployeeId(userId)
+                    .orElseGet(() -> getDetails(userId));
         } catch (Exception e) {
-            logger.error("Error retrieving ASHA worker profile for employeeId {}: {}", employeeId, e.getMessage(), e);
             throw new RuntimeException("Failed to retrieve ASHA worker profile", e);
         }
     }
