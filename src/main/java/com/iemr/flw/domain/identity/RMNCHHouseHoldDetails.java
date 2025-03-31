@@ -325,4 +325,5 @@ public class RMNCHHouseHoldDetails {
 	@Column(name = "mohallaName")
 	private String mohallaName;
 
+
 }

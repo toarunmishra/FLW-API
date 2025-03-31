@@ -46,7 +46,6 @@ public class DiseaseControlDTO {
 
     private BigInteger diseaseTypeId;
 
-    private String  otherFields;
 
 
 }

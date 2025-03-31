@@ -112,48 +112,7 @@ public class MaternalHealthController {
         return response.toString();
     }
 
-    @CrossOrigin()
-    @Operation(summary = "save ANC visit details with file")
-    @RequestMapping(value = {"/ancVisit/saveAll"}, method = {RequestMethod.POST}, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<OutputResponse> saveANCVisit(
-            @RequestPart("ancVisitDTOs") @Valid @RequestBody List<ANCVisitDTO> ancVisitDTOs,
-            @RequestPart(value = "file", required = false) MultipartFile file,
-            @RequestHeader(value = "Authorization") String Authorization) {
 
-        OutputResponse response = new OutputResponse();
-        try {
-            if (ancVisitDTOs.isEmpty()) {
-                response.setError(5000, "Invalid/NULL request obj");
-                return ResponseEntity.badRequest().body(response);
-            }
-
-            // Save File if provided
-            String filePath = null;
-            if (file != null && !file.isEmpty()) {
-                filePath = fileStorageService.storeFile(file);  // Save the file
-            }
-
-            // Set the filePath in DTOs
-            for (ANCVisitDTO dto : ancVisitDTOs) {
-                dto.setFilePath(filePath);
-            }
-
-            logger.info("Saving ANC visits with timestamp : " + new Timestamp(System.currentTimeMillis()));
-            String s = maternalHealthService.saveANCVisit(ancVisitDTOs);
-
-            if (s != null) {
-                response.setResponse(s);
-                return ResponseEntity.ok(response);
-            } else {
-                response.setError(5000, "Saving ANC data to DB failed");
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-            }
-        } catch (Exception e) {
-            logger.error("Error in saving ANC visit details : " + e);
-            response.setError(5000, "Error in saving ANC visit details: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
-    }
 
     @CrossOrigin()
     @Operation(summary = "get anc visit details")

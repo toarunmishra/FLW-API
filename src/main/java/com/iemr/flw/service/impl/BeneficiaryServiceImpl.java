@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.iemr.flw.domain.identity.*;
+import com.iemr.flw.repo.identity.BeneficiaryConsentRepo;
 import com.iemr.flw.utils.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -32,16 +34,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
-import com.iemr.flw.domain.identity.BenHealthIDDetails;
-import com.iemr.flw.domain.identity.RMNCHBeneficiaryDetailsRmnch;
-import com.iemr.flw.domain.identity.RMNCHBornBirthDetails;
-import com.iemr.flw.domain.identity.RMNCHHouseHoldDetails;
-import com.iemr.flw.domain.identity.RMNCHMBeneficiaryAccount;
-import com.iemr.flw.domain.identity.RMNCHMBeneficiaryImage;
-import com.iemr.flw.domain.identity.RMNCHMBeneficiaryaddress;
-import com.iemr.flw.domain.identity.RMNCHMBeneficiarycontact;
-import com.iemr.flw.domain.identity.RMNCHMBeneficiarydetail;
-import com.iemr.flw.domain.identity.RMNCHMBeneficiarymapping;
 import com.iemr.flw.dto.identity.GetBenRequestHandler;
 import com.iemr.flw.mapper.InputMapper;
 import com.iemr.flw.repo.identity.BeneficiaryRepo;
@@ -72,6 +64,8 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
     @Autowired
     private CookieUtil cookieUtil;
 
+    @Autowired
+    BeneficiaryConsentRepo beneficiaryConsentRepo;
     @Override
     public String getBenData(GetBenRequestHandler request, String authorisation) throws Exception {
         String outputResponse = null;
@@ -136,6 +130,8 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
         RMNCHMBeneficiaryImage benImageOBJ;
         RMNCHMBeneficiaryaddress benAddressOBJ;
         RMNCHMBeneficiarycontact benContactOBJ;
+        MBeneficiaryconsent mBeneficiaryconsent ;
+
 
         Map<String, Object> resultMap;
         ArrayList<Map<String, Object>> resultList = new ArrayList<>();
@@ -144,6 +140,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
             // exception by-passing
             try {
                 RMNCHMBeneficiarymapping m = beneficiaryRepo.getByAddressID(a.getId());
+                logger.info("RMNCHMBeneficiarymapping"+m.getBenRegId());
                 if (m != null) {
                     benHouseHoldRMNCH_ROBJ = new RMNCHHouseHoldDetails();
                     benDetailsRMNCH_OBJ = new RMNCHBeneficiaryDetailsRmnch();
@@ -171,6 +168,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
                         benContactOBJ = beneficiaryRepo.getContactById(m.getBenContactsId());
                     }
 
+
                     BigInteger benID = null;
                     if (m.getBenRegId() != null)
                         benID = beneficiaryRepo.getBenIdFromRegID(m.getBenRegId().longValue());
@@ -179,11 +177,14 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
                         benDetailsRMNCH_OBJ = beneficiaryRepo
                                 .getDetailsByRegID((m.getBenRegId()).longValue());
                         benBotnBirthRMNCH_ROBJ = beneficiaryRepo.getBornBirthByRegID((m.getBenRegId()).longValue());
+                        logger.info("BenId:"+m.getBenRegId());
+                        logger.info("benDetailsRMNCH_OBJ:"+benDetailsRMNCH_OBJ);
 
-                        if (benDetailsRMNCH_OBJ != null && benDetailsRMNCH_OBJ.getHouseoldId() != null)
-                            benHouseHoldRMNCH_ROBJ = houseHoldRepo
-                                    .getByHouseHoldID(benDetailsRMNCH_OBJ.getHouseoldId());
-                        logger.info("HouseholdData:" + houseHoldRepo.getByHouseHoldID(benDetailsRMNCH_OBJ.getHouseoldId()));
+                        if (benDetailsRMNCH_OBJ != null){
+                            benHouseHoldRMNCH_ROBJ = houseHoldRepo.getByHouseHoldID(benDetailsRMNCH_OBJ.getHouseoldId());
+
+
+                        }
 
                     }
                     if (benDetailsRMNCH_OBJ == null)
@@ -358,6 +359,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
                     }
 
+
                     benDetailsRMNCH_OBJ.setAgeFull(ageDetails);
 
                     benDetailsRMNCH_OBJ.setAge(age_val);
@@ -377,8 +379,24 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
                     resultMap.put("beneficiaryDetails", benDetailsRMNCH_OBJ);
                     resultMap.put("abhaHealthDetails", healthDetails);
-                    resultMap.put("houseoldId", benDetailsRMNCH_OBJ.getHouseoldId());
-                    resultMap.put("benficieryid", benDetailsRMNCH_OBJ.getBenficieryid());
+                    if(benDetailsRMNCH_OBJ!=null){
+                        resultMap.put("houseoldId", benDetailsRMNCH_OBJ.getHouseoldId());
+                        resultMap.put("benficieryid", benDetailsRMNCH_OBJ.getBenficieryid());
+
+                        mBeneficiaryconsent = beneficiaryConsentRepo.getByBenConsentID(m.getBenConsentId());
+                        logger.info("BenConsentId"+m.getBenConsentId());
+                        logger.info("mBeneficiaryconsent Data:"+mBeneficiaryconsent);
+                        if(mBeneficiaryconsent!=null){
+                            resultMap.put("isConsent", true);
+
+                        }else {
+                            resultMap.put("isConsent", false);
+
+                        }
+                    }
+
+
+
                     resultMap.put("BenRegId", m.getBenRegId());
 
                     // adding asha id / created by - user id
@@ -398,7 +416,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
                     // mapping not available
                 }
             } catch (Exception e) {
-                logger.error("error for addressID :" + a.getId() + " and vanID : " + a.getVanID());
+                logger.error("error for addressID :" + a.getId() + " and vanID : " + a.getVanID()+"Exception"+e.getMessage());
             }
         }
 

@@ -7,7 +7,9 @@ import com.iemr.flw.service.DiseaseControlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class DiseaseControlServiceImpl implements DiseaseControlService {
@@ -41,21 +43,28 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
         diseaseControl.setCaseDate(diseaseControlDTO.getCaseDate()); // Added
         diseaseControl.setCaseStatus(diseaseControlDTO.getCaseStatus());
         diseaseControl.setSymptoms(diseaseControlDTO.getSymptoms());
-        diseaseControl.setMalariaCaseCount(diseaseControlDTO.getMalariaCaseCount());
         diseaseControl.setReferredTo(diseaseControlDTO.getReferredTo()); // Added
         diseaseControl.setOtherReferredTo(diseaseControlDTO.getOtherReferredTo());
-        diseaseControl.setMalariaCaseStatusDate(diseaseControlDTO.getMalariaCaseStatusDate()); // Added
         diseaseControl.setRemarks(diseaseControlDTO.getRemarks());
-        diseaseControl.setFollowUpPoint(diseaseControlDTO.getFollowUpPoint());
-        diseaseControl.setFollowUpDate(diseaseControlDTO.getFollowUpDate());
         diseaseControl.setStatus(diseaseControlDTO.getStatus());
         diseaseControl.setBodyPart(diseaseControlDTO.getBodyPart());
         diseaseControl.setSufferingFromFilariasis(diseaseControlDTO.getSufferingFromFilariasis());
         diseaseControl.setOtherStatus(diseaseControlDTO.getOtherStatus());
         diseaseControl.setHomeVisitDate(diseaseControlDTO.getHomeVisitDate());
-        diseaseControl.setLeprosyStatusDate(diseaseControlDTO.getLeprosyStatusDate());
         diseaseControl.setMedicineSideEffect(diseaseControlDTO.getMedicineSideEffect());
         diseaseControl.setDiseaseTypeId(diseaseControlDTO.getDiseaseTypeId());
+
+        Map<String, Object> diseaseRelatedData = new HashMap<>();
+        diseaseRelatedData.put("malariaCaseCount", diseaseControlDTO.getMalariaCaseCount());
+        diseaseRelatedData.put("malariaCaseStatusDate", diseaseControlDTO.getMalariaCaseStatusDate());
+
+        diseaseControl.setFollowUpPoint(diseaseControlDTO.getFollowUpPoint());
+        diseaseControl.setFollowUpDate(diseaseControlDTO.getFollowUpDate());
+        diseaseControl.setLeprosyStatusDate(diseaseControlDTO.getLeprosyStatusDate());
+
+        diseaseControl.setOtherFields(diseaseRelatedData.toString());
+
+
         return diseaseControl;
 
     }

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.ws.rs.core.MediaType;
 
 @RestController
-@RequestMapping(value = "/beneficiary",headers = "Authorization")
+@RequestMapping(value = "/beneficiary", headers = "Authorization")
 public class BeneficiaryOTPGatewayController {
     final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -27,14 +27,14 @@ public class BeneficiaryOTPGatewayController {
 
     @Operation(summary = "Send OTP")
     @RequestMapping(value = "/sendOTP", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
-    public String  sendOTP(@RequestParam String phoneNumber) throws Exception {
+    public String sendOTP(@RequestParam String phoneNumber) throws Exception {
         logger.info(phoneNumber);
 
         OutputResponse response = new OutputResponse();
 
         try {
 
-            String success = otpHandler.sendOTP(phoneNumber,"");
+            String success = otpHandler.sendOTP(phoneNumber, "");
             logger.info(success.toString());
             if (success.contains("otp"))
                 response.setResponse(success);
@@ -68,8 +68,8 @@ public class BeneficiaryOTPGatewayController {
                 response.setError(5000, "failure");
 
         } catch (Exception e) {
-            logger.error("error in validating OTP : " + e);
-            response.setError(5000, "error : " + e);
+            logger.error("error in validating OTP : " + e.getMessage());
+            response.setError(5000, "error : "+e.getMessage());
         }
         return response.toString();
     }
@@ -84,7 +84,7 @@ public class BeneficiaryOTPGatewayController {
 
         try {
 
-            String success = otpHandler.resendOTP(phoneNumber,Authorization);
+            String success = otpHandler.resendOTP(phoneNumber, Authorization);
             logger.info(success.toString());
             if (success.contains("otp"))
                 response.setResponse(success);

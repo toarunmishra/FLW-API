@@ -2,6 +2,7 @@ package com.iemr.flw.service.impl;
 
 import com.iemr.flw.domain.iemr.AshaWorker;
 import com.iemr.flw.domain.iemr.M_User;
+import com.iemr.flw.domain.iemr.M_UserDemographics;
 import com.iemr.flw.repo.iemr.AshaProfileRepo;
 import com.iemr.flw.service.AshaProfileService;
 import com.iemr.flw.service.EmployeeMasterInter;
@@ -59,6 +60,7 @@ public class AshaProfileImpl implements AshaProfileService {
                     employeeMasterInter.getUserDetails(userID),
                     "User details not found for ID: " + userID
             );
+            M_UserDemographics m_userDemographics = Objects.requireNonNull(employeeMasterInter.getUserDemographicsDetails(userID));
             AshaWorker ashaWorker = new AshaWorker();
             ashaWorker.setEmployeeId(m_user.getUserID());
             ashaWorker.setDob(m_user.getDOB());
@@ -69,6 +71,8 @@ public class AshaProfileImpl implements AshaProfileService {
             ashaWorker.setMobileNumber(m_user.getContactNo());
             ashaWorker.setAlternateMobileNumber(m_user.getEmergencyContactNo());
             ashaWorker.setProviderServiceMapID(m_user.getServiceProviderID());
+            ashaWorker.setFatherOrSpouseName(m_userDemographics.getFathersName());
+            ashaWorker.setIsFatherOrSpouse(false);
             return ashaWorker;
         } catch (Exception e) {
             logger.error("Error creating ASHA worker profile from user details for ID {}: {}", userID, e.getMessage(), e);
@@ -108,6 +112,10 @@ public class AshaProfileImpl implements AshaProfileService {
             editdata.setAnm2Mobile(editAshaWorkerRequest.getAnm2Mobile());  // Corrected line
             editdata.setAwwMobile(editAshaWorkerRequest.getAwwMobile());
             editdata.setProviderServiceMapID(editAshaWorkerRequest.getProviderServiceMapID());
+            editdata.setProfileImage(editAshaWorkerRequest.getProfileImage());
+            editdata.setIsFatherOrSpouse(editAshaWorkerRequest.getIsFatherOrSpouse());
+            editdata.setSupervisorName(editAshaWorkerRequest.getSupervisorName());
+            editdata.setSupervisorMobile(editAshaWorkerRequest.getSupervisorMobile());
             return editdata;
 
         } catch (Exception e) {

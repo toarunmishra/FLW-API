@@ -190,4 +190,6 @@ public class RMNCHMBeneficiarydetail {
 	@Column(name = "isConsent")
 	private Boolean isConsent ;
 
+
+
 }

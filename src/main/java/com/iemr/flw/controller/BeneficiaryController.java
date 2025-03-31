@@ -36,11 +36,11 @@ public class BeneficiaryController {
                 else
                     logger.error("No record found");
 
-                response.setError(5000, "No record found");
+               // response.setError(5000, "No record found");
             } else
                 logger.error("Invalid/NULL request obj");
 
-            response.setError(5000, "Invalid/NULL request obj");
+          //  response.setError(5000, "Invalid/NULL request obj");
         } catch (Exception e) {
             logger.error("Error in get data : " + e.getMessage());
             response.setError(5000, "Error in get data : " + e.getMessage());

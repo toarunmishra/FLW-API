@@ -17,7 +17,8 @@ import java.util.ArrayList;
 public interface BeneficiaryRepo extends JpaRepository<RMNCHBeneficiaryDetailsRmnch, Long> {
 
     @Query(nativeQuery = true, value = " select UserName from db_iemr.m_user where  UserID = :userId and deleted is false ")
-    String getUserName(@Param("userId") Integer userId);
+    String
+    getUserName(@Param("userId") Integer userId);
 
     @Query(nativeQuery = true, value = " SELECT userid FROM db_iemr.m_user WHERE UserName = :userName ")
     Integer getUserIDByUserName(@Param("userName") String userName);
@@ -32,6 +33,8 @@ public interface BeneficiaryRepo extends JpaRepository<RMNCHBeneficiaryDetailsRm
 
     @Query(value = " SELECT t FROM RMNCHMBeneficiarymapping t WHERE t.benAddressId = :addressID")
     RMNCHMBeneficiarymapping getByAddressID(@Param("addressID") BigInteger addressID);
+
+
 
     @Query(value = " SELECT t FROM RMNCHMBeneficiarydetail t WHERE t.id = :vanSerialNo")
     RMNCHMBeneficiarydetail getDetailsById(@Param("vanSerialNo") BigInteger vanSerialNo);

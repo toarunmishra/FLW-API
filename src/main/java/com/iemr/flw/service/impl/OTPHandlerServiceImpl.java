@@ -43,7 +43,7 @@ public class OTPHandlerServiceImpl implements OTPHandler {
 
     private LoadingCache<String, String> otpCache;
 
-    private static final Integer EXPIRE_MIN = 5;
+    private static final Integer EXPIRE_MIN = 15;
 
     private static final String SMS_GATEWAY_URL = ConfigProperties.getPropertyByName("sms-gateway-url");
 

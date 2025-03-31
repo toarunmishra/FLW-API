@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 @Entity
 @Data
-@Table(name = "asha_profile",schema = "db_iemr")
+@Table(name = "asha_profile", schema = "db_iemr")
 public class AshaWorker {
 
     @Id
@@ -54,7 +54,7 @@ public class AshaWorker {
     private Integer populationCovered;
 
 
-    @Column(name = "cho_name",nullable = false)
+    @Column(name = "cho_name", nullable = false)
     private String choName;
 
 
@@ -97,4 +97,14 @@ public class AshaWorker {
 
     @Column(name = "ProviderServiceMapID")
     private Integer ProviderServiceMapID;
+    @Column(name = "profileImage")
+    private String profileImage;
+
+    @Column(name = "isFatherOrSpouse")
+    private Boolean isFatherOrSpouse;
+    @Column(name = "supervisorName")
+    private String  supervisorName;
+    @Column(name = "supervisorMobile")
+    private String supervisorMobile;
+
 }
