@@ -33,8 +33,8 @@ public class OTPHandlerServiceImpl implements OTPHandler {
     @Value("${sendSMSUrl}")
     private String sendSMSUrl;
 
-    @Value("${sendOTPUrl}")
-    private String OTP_SERVICE_URL;
+//    @Value("${sendOTPUrl}")
+//    private String OTP_SERVICE_URL;
 
     RestTemplate restTemplate;
     @Autowired
