@@ -53,7 +53,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
             if (malariaControlRepo.findByBenId(diseaseControlData.getBenId()).isPresent()) {
                 return updateMalaria(diseaseControlData);
             } else {
-                if(diseaseControlDTO.getUserId()!=null){
+                if (diseaseControlDTO.getUserId() != null) {
                     diseaseControlData.setUserID(diseaseControlData.getUserID());
                 }
                 malariaControlRepo.save(diseaseControlData);
@@ -71,7 +71,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
             if (kalazarControlRepo.findByBenId(diseaseControlData.getBenId()).isPresent()) {
                 return updateKalaAzar(diseaseControlData);
             } else {
-                if(diseaseControlDTO.getUserId()!=null){
+                if (diseaseControlDTO.getUserId() != null) {
                     diseaseControlData.setUserID(diseaseControlData.getUserID());
                 }
                 kalazarControlRepo.save(diseaseControlData);
@@ -89,7 +89,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
             if (aesJeControlRepo.findByBenId(diseaseControlData.getBenId()).isPresent()) {
                 return updateAesJe(diseaseControlData);
             } else {
-                if(diseaseControlDTO.getUserId()!=null){
+                if (diseaseControlDTO.getUserId() != null) {
                     diseaseControlData.setUserID(diseaseControlData.getUserID());
                 }
                 aesJeControlRepo.save(diseaseControlData);
@@ -106,7 +106,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
             if (filariaControlRepo.findByBenId(diseaseControlData.getBenId()).isPresent()) {
                 return updateFilaria(diseaseControlData);
             } else {
-                if(diseaseControlDTO.getUserId()!=null){
+                if (diseaseControlDTO.getUserId() != null) {
                     diseaseControlData.setUserID(diseaseControlData.getUserID());
                 }
                 filariaControlRepo.save(diseaseControlData);
@@ -123,7 +123,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
             if (leprosyControlRepo.findByBenId(diseaseControlData.getBenId()).isPresent()) {
                 return updateLeprosy(diseaseControlData);
             } else {
-                if(diseaseControlDTO.getUserId()!=null){
+                if (diseaseControlDTO.getUserId() != null) {
                     diseaseControlData.setUserID(diseaseControlData.getUserID());
                 }
                 leprosyControlRepo.save(diseaseControlData);
@@ -135,8 +135,20 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
     }
 
     @Override
-    public List<DiseaseControl> getAll(BigInteger diseaseTypeID) {
-        return diseaseControlRepo.findAll().stream().filter(diseaseControl -> diseaseControl.getDiseaseTypeId()==diseaseTypeID).collect(Collectors.toList());
+    public Object getAll(Integer diseaseTypeID) {
+        if (diseaseTypeID == 1) {
+            return malariaControlRepo.findAll();
+        } else if (diseaseTypeID == 2) {
+            return filariaControlRepo.findAll();
+        } else if (diseaseTypeID == 3) {
+            return kalazarControlRepo.findAll();
+
+        } else if (diseaseTypeID == 4) {
+            return aesJeControlRepo.findAll();
+        } else if (diseaseTypeID == 5) {
+            return leprosyControlRepo.findAll();
+        }
+        return null;
     }
 
     private DiseaseControl saveData(DiseaseControl diseaseControlDTO) {
@@ -198,6 +210,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
             return "Data updated successfully";
         }).orElseThrow(() -> new RuntimeException("Data not found"));
     }
+
     private String updateLeprosy(LeprosyData updateData) {
         return leprosyControlRepo.findByBenId(updateData.getBenId()).map(leprosyData -> {
             leprosyData.setId(updateData.getId());
@@ -253,7 +266,6 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
             return "Data updated successfully";
         }).orElseThrow(() -> new RuntimeException("Data not found"));
     }
-
 
 
     private String update(DiseaseControl diseaseControlDTO) {

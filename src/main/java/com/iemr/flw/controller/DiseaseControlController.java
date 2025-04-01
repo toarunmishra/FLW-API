@@ -80,7 +80,7 @@ public class DiseaseControlController {
     }
 
     @RequestMapping(value = "getAll", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<Map<String, Object>> getAllData(@Param("diseaseTypeID") BigInteger diseaseTypeID) {
+    public ResponseEntity<Map<String, Object>> getAllData(@Param("diseaseTypeID") Integer diseaseTypeID) {
         Map<String, Object> response = new HashMap<>();
         response.put("status", "Success");
         response.put("statusCode", 200);
