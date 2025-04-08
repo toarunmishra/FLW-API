@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class IRSRoundController {
     @Autowired
     private IRSRoundService irsRoundService;
 
-    @RequestMapping(name = "/add", method = RequestMethod.POST)
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     public String addRound(@RequestBody IRSRoundListDTO dto) {
         OutputResponse response = new OutputResponse();
         try {
@@ -42,7 +43,7 @@ public class IRSRoundController {
 
     }
 
-    @RequestMapping(name = "/list/{householdId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/list/{householdId}", method = RequestMethod.GET)
     public List<IRSRound> getRounds(@PathVariable Long householdId) {
         return irsRoundService.getRounds(householdId);
     }

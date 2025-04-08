@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value = "/disease", headers = "Authorization")
+@RequestMapping(value = "/disease")
 public class DiseaseControlController {
 
     @Autowired

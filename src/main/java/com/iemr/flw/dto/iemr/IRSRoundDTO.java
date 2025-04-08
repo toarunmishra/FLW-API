@@ -14,5 +14,5 @@ public class IRSRoundDTO {
     private Long id;
     private Date date;
     private int rounds;
-    private BigInteger householdId;
+    private Long householdId;
 }
