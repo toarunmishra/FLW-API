@@ -7,13 +7,17 @@ import com.iemr.flw.dto.iemr.*;
 import com.iemr.flw.repo.identity.BeneficiaryRepo;
 import com.iemr.flw.repo.iemr.*;
 import com.iemr.flw.service.MaternalHealthService;
+import com.iemr.flw.service.NotificationService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -58,10 +62,14 @@ public class MaternalHealthServiceImpl implements MaternalHealthService {
     @Autowired
     private IncentiveRecordRepo recordRepo;
 
+    @Autowired
+    private NotificationService notificationService;
+
 
     ObjectMapper mapper = new ObjectMapper();
 
     ModelMapper modelMapper = new ModelMapper();
+    private Integer ashaId;
 
     public static final List<String> PNC_PERIODS =
             Arrays.asList("1st Day", "3rd Day", "7th Day", "14th Day", "21st Day", "28th Day", "42nd Day");
@@ -116,6 +124,7 @@ public class MaternalHealthServiceImpl implements MaternalHealthService {
     public List<ANCVisitDTO> getANCVisits(GetBenRequestHandler dto) {
         try {
             String user = beneficiaryRepo.getUserName(dto.getAshaId());
+            ashaId = dto.getAshaId();
             List<ANCVisit> ancVisits = ancVisitRepo.getANCForPW(user, dto.getFromDate(), dto.getToDate());
             return ancVisits.stream()
                     .map(anc -> mapper.convertValue(anc, ANCVisitDTO.class))
@@ -125,6 +134,43 @@ public class MaternalHealthServiceImpl implements MaternalHealthService {
         }
         return null;
     }
+
+    public void sendAncDueTomorrowNotifications(String ashaId) {
+        try {
+            GetBenRequestHandler request = new GetBenRequestHandler();
+            request.setAshaId(Integer.valueOf(ashaId));
+            request.setFromDate(Timestamp.valueOf(LocalDate.now().plusDays(1).atStartOfDay())); // Tomorrow at 00:00:00
+            request.setToDate(Timestamp.valueOf(LocalDate.now().plusDays(1).atTime(LocalTime.MAX))); // Tomorrow at 23:59:59.999999999
+
+
+            List<ANCVisitDTO> ancList = getANCVisits(request);
+
+            if (ancList != null) {
+                for (ANCVisitDTO anc : ancList) {
+                    if (anc.getAncDate() != null &&
+                            anc.getAncDate().toLocalDateTime().toLocalDate().isEqual(LocalDate.now().plusDays(1))) {
+
+                        String ancType = anc.getAbortionType(); // ANC1, ANC2, etc.
+                        String body = "Reminder: Scheduled ANC check-up (" + ancType + ") is due tomorrow.";
+                        String redirectPath = "/work-plan/anc/" + ancType.toLowerCase();
+
+                        notificationService.sendNotification("20c05e096591e8dba91a18fd22983d4f704b31d3fb2602e6e33b978ca6ed7f5a",
+                                "flw",
+                                "All",
+                                "ANC Reminder",
+                                body,
+                                redirectPath
+                        );
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            logger.error("Error in sending ANC reminder notifications: {}", e.getMessage());
+        }
+    }
+
+
 
     @Override
     public String saveANCVisit(List<ANCVisitDTO> ancVisitDTOs) {

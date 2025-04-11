@@ -9,13 +9,16 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @ComponentScan("com.iemr.flw.*")
+@EnableScheduling
 @EntityScan(basePackages = {"com.iemr.flw.domain.identity", "com.iemr.flw.domain.iemr"})
 public class FlwApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
+
         SpringApplication.run(applicationClass, args);
     }
 
