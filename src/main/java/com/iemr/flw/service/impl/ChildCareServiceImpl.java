@@ -7,6 +7,7 @@ import com.iemr.flw.dto.iemr.*;
 import com.iemr.flw.repo.identity.BeneficiaryRepo;
 import com.iemr.flw.repo.iemr.*;
 import com.iemr.flw.service.ChildCareService;
+import com.iemr.flw.service.NotificationService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,6 +61,9 @@ public class ChildCareServiceImpl implements ChildCareService {
     ObjectMapper mapper = new ObjectMapper();
 
     ModelMapper modelMapper = new ModelMapper();
+
+    @Autowired
+    private NotificationService notificationService;
 
     @Override
     public String registerHBYC(List<HbycDTO> hbycDTOs) {
@@ -354,6 +359,41 @@ public class ChildCareServiceImpl implements ChildCareService {
         }
         return null;
     }
+
+    public void getTomorrowImmunizationReminders() {
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+        List<Vaccine> tomorrowVaccines = vaccineRepo.findByScheduledDateAndIsCompletedFalse(tomorrow);
+
+        for (Vaccine childVaccine : tomorrowVaccines) {
+            String section = mapToWorkPlanSection(childVaccine.getImmunizationService());
+            String auth = "Bearer xyz"; // replace with actual auth token or config
+            String appType = "FLW_APP"; // or "ASHAA_APP", based on user type
+            String topic = "user_" + childVaccine.getCategory(); // or some user/topic identifier
+            String title = "Routine Immunization Reminder";
+            String body = "Reminder: Child's immunization is due tomorrow.";
+            String redirect = "/workplan/" + section; // deep-link to section
+
+            notificationService.sendNotification(auth, appType, topic, title, body, redirect);
+
+        }
+
+    }
+
+    public String mapToWorkPlanSection(String immunizationService) {
+        switch (immunizationService) {
+            case "Birth Dose Vaccines": return "BIRTH";
+            case "6 Weeks Vaccines": return "WEEK_6";
+            case "10 Weeks Vaccines": return "WEEK_10";
+            case "14 Weeks Vaccines": return "WEEK_14";
+            case "9-12 Months": return "MONTH_9_12";
+            case "16-24 Months Vaccines": return "MONTH_16_24";
+            case "5-6 Years Vaccine": return "YEAR_5_6";
+            case "10 Years Vaccine": return "YEAR_10";
+            case "16 Years Vaccine": return "YEAR_16";
+            default: return "CATCH_UP";
+        }
+    }
+
     private void checkAndAddIncentives(List<ChildVaccination> vaccinationList) {
 
         vaccinationList.forEach( vaccination -> {
