@@ -8,6 +8,7 @@ import com.iemr.flw.repo.identity.BeneficiaryRepo;
 import com.iemr.flw.repo.iemr.*;
 import com.iemr.flw.service.ChildCareService;
 import com.iemr.flw.service.NotificationService;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -360,20 +361,19 @@ public class ChildCareServiceImpl implements ChildCareService {
         return null;
     }
 
-    public void getTomorrowImmunizationReminders() {
+    public void getTomorrowImmunizationReminders(Integer ashaId) {
         LocalDate tomorrow = LocalDate.now().plusDays(1);
-        List<Vaccine> tomorrowVaccines = vaccineRepo.findByScheduledDateAndIsCompletedFalse(tomorrow);
+        List<Vaccine> tomorrowVaccines = vaccineRepo.findAll();
 
         for (Vaccine childVaccine : tomorrowVaccines) {
             String section = mapToWorkPlanSection(childVaccine.getImmunizationService());
-            String auth = "Bearer xyz"; // replace with actual auth token or config
             String appType = "FLW_APP"; // or "ASHAA_APP", based on user type
-            String topic = "user_" + childVaccine.getCategory(); // or some user/topic identifier
+            String topic = "immunization"+ashaId; // or some user/topic identifier
             String title = "Routine Immunization Reminder";
             String body = "Reminder: Child's immunization is due tomorrow.";
             String redirect = "/workplan/" + section; // deep-link to section
 
-            notificationService.sendNotification(auth, appType, topic, title, body, redirect);
+            notificationService.sendNotification(appType, topic, title, body, redirect);
 
         }
 

@@ -153,11 +153,14 @@ public class MaternalHealthServiceImpl implements MaternalHealthService {
                         String ancType = anc.getAbortionType(); // ANC1, ANC2, etc.
                         String body = "Reminder: Scheduled ANC check-up (" + ancType + ") is due tomorrow.";
                         String redirectPath = "/work-plan/anc/" + ancType.toLowerCase();
+                        String appType = "FLW_APP"; // or "ASHAA_APP", based on user type
+                        String topic = "ANC"+ashaId; // or some user/topic identifier
+                        String title = "ANC Reminder";
 
-                        notificationService.sendNotification("20c05e096591e8dba91a18fd22983d4f704b31d3fb2602e6e33b978ca6ed7f5a",
-                                "flw",
-                                "All",
-                                "ANC Reminder",
+                        notificationService.sendNotification(
+                                appType,
+                                topic,
+                                title,
                                 body,
                                 redirectPath
                         );

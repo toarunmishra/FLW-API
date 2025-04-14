@@ -12,6 +12,7 @@ public  class DiseaseScreeningDTO {
     private BigInteger houseHoldDetailsId;
     private Date screeningDate;
     private String beneficiaryStatus;
+    private Integer beneficiaryStatusId;
     private Date dateOfDeath;
     private String placeOfDeath;
     private String otherPlaceOfDeath;
@@ -39,4 +40,6 @@ public  class DiseaseScreeningDTO {
     private boolean diarrhea;
     private Integer userID;
     private Integer diseaseTypeID;
+    private String createdBy;
+    private String referToName;
 }

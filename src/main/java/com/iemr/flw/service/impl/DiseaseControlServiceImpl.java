@@ -8,6 +8,8 @@ import com.iemr.flw.service.DiseaseControlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -15,6 +17,14 @@ import java.util.stream.Collectors;
 public class DiseaseControlServiceImpl implements DiseaseControlService {
     @Autowired
     private DiseaseScreeningRepo diseaseScreeningRepo;
+    @Autowired
+    private IncentiveRecordRepo recordRepo;
+    @Autowired
+    private UserServiceRoleRepo userRepo;
+
+    @Autowired
+    private IncentivesRepo incentivesRepo;
+
 
 
     @Override
@@ -234,6 +244,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
             diseaseScreening.setReferredTo(requestData.getReferredTo());
             diseaseScreening.setOtherReferredFacility(requestData.getOtherReferredFacility());
             diseaseScreening.setRemarks(requestData.getRemarks());
+            diseaseScreening.setCreatedDate(Timestamp.valueOf(LocalDateTime.now()));
             diseaseScreening.setDateOfVisitBySupervisor(requestData.getDateOfVisitBySupervisor());
             diseaseScreeningRepo.save(diseaseScreening);
             return "Data update successfully";
@@ -270,6 +281,8 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
         diseaseScreening.setOtherReferredFacility(requestData.getOtherReferredFacility());
         diseaseScreening.setRemarks(requestData.getRemarks());
         diseaseScreening.setDateOfVisitBySupervisor(requestData.getDateOfVisitBySupervisor());
+        diseaseScreening.setCreatedDate(Timestamp.valueOf(LocalDateTime.now()));
+        checkAndAddIncentives(diseaseScreening);
 
         return diseaseScreeningRepo.save(diseaseScreening);
     }
@@ -394,5 +407,53 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
             return "Data updated successfully";
 
         }).orElseThrow(() -> new RuntimeException("Data not found"));
+    }
+
+
+    private void checkAndAddIncentives(DiseaseScreening diseaseScreening) {
+        IncentiveActivity diseaseScreeningActivity =
+                incentivesRepo.findIncentiveMasterByNameAndGroup("MALARIA_1", "DISEASECONTROL");
+
+        IncentiveActivity diseaseScreeningActivit2 =
+                incentivesRepo.findIncentiveMasterByNameAndGroup("MALARIA_2", "DISEASECONTROL");
+
+
+
+        if (diseaseScreeningActivity != null) {
+            if (diseaseScreening.getDiseaseTypeID() == 1) {
+                IncentiveActivityRecord record = recordRepo
+                        .findRecordByActivityIdCreatedDateBenId(diseaseScreeningActivity.getId(), diseaseScreening.getCreatedDate(), diseaseScreening.getBenId().longValue());
+                if (record == null) {
+                    if(Objects.equals(diseaseScreening.getCaseStatus(), "Confirmed Case")){
+                        record = new IncentiveActivityRecord();
+                        record.setActivityId(diseaseScreeningActivity.getId());
+                        record.setCreatedDate(diseaseScreening.getCreatedDate());
+                        record.setCreatedBy(diseaseScreening.getCreatedBy());
+                        record.setStartDate(diseaseScreening.getCreatedDate());
+                        record.setEndDate(diseaseScreening.getCreatedDate());
+                        record.setUpdatedDate(diseaseScreening.getCreatedDate());
+                        record.setUpdatedBy(diseaseScreening.getCreatedBy());
+                        record.setBenId(diseaseScreening.getBenId().longValue());
+                        record.setAshaId(diseaseScreening.getUserID());
+                        record.setAmount(Long.valueOf(diseaseScreeningActivity.getRate()));
+                        recordRepo.save(record);
+                    }else {
+                        record = new IncentiveActivityRecord();
+                        record.setActivityId(diseaseScreeningActivit2.getId());
+                        record.setCreatedDate(diseaseScreening.getCreatedDate());
+                        record.setCreatedBy(diseaseScreening.getCreatedBy());
+                        record.setStartDate(diseaseScreening.getCreatedDate());
+                        record.setEndDate(diseaseScreening.getCreatedDate());
+                        record.setUpdatedDate(diseaseScreening.getCreatedDate());
+                        record.setUpdatedBy(diseaseScreening.getCreatedBy());
+                        record.setBenId(diseaseScreening.getBenId().longValue());
+                        record.setAshaId(diseaseScreening.getUserID());
+                        record.setAmount(Long.valueOf(diseaseScreeningActivit2.getRate()));
+                        recordRepo.save(record);
+                    }
+
+                }
+            }
+        }
     }
 }

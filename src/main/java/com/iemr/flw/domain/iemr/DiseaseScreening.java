@@ -85,5 +85,11 @@ public class DiseaseScreening {
     @Column(name = "userID")  // Ensure exact match
     private Integer userID;
 
+    @Column(name = "created_date")
+    private Timestamp createdDate;
+
+    @Column(name = "created_by")
+    private String createdBy;
+
 
 }

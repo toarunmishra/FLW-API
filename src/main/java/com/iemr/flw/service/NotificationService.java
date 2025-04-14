@@ -8,6 +8,7 @@ import com.iemr.flw.domain.identity.BenHealthIDDetails;
 import com.iemr.flw.mapper.InputMapper;
 import com.iemr.flw.utils.config.ConfigProperties;
 import com.iemr.flw.utils.http.HttpUtils;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -29,13 +30,23 @@ public class NotificationService {
     @Value("${notificationurl}")
     private String NOTIFICATION_URL;
 
-    public String sendNotification(String auth,String appType, String topic, String title, String body, String redirect) {
+    public String sendNotification(String appType, String topic, String title, String body, String redirect) {
+        HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        String jwtToken = "";
+        if (httpServletRequest.getCookies() != null) {
+            for (Cookie cookie : httpServletRequest.getCookies()) {
+                if ("Jwttoken".equals(cookie.getName())) {
+                    jwtToken = cookie.getValue();
+                }
+            }
+        }
 
         RestTemplate restTemplate = new RestTemplate();
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
         headers.add("Content-Type", "application/json");
-        headers.add("AUTHORIZATION", auth);
-        headers.add("Cookie", "Jwttoken=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5OTAwMDAwMDAxIiwidXNlcklkIjoiMTIwNSIsImlhdCI6MTc0NDI4NjE1NiwiZXhwIjoxNzQ0MzcyNTU2fQ.1fDRuSNGrcle_Okwi9a_eyCnaPb_h4evDRx8ubHRdYg");
+        headers.add("AUTHORIZATION", authHeader);
+        headers.add("Cookie", "Jwttoken="+jwtToken);
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("appType", appType);
@@ -44,7 +55,7 @@ public class NotificationService {
         requestBody.put("body", body);
 
         Map<String, String> dataMap = new HashMap<>();
-        dataMap.put("NotificationTypeId", "flw");
+        dataMap.put("NotificationTypeId", redirect);
         requestBody.put("data", dataMap);
 
         Gson gson = new Gson();

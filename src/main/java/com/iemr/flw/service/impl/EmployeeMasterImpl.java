@@ -8,6 +8,8 @@ import com.iemr.flw.service.EmployeeMasterInter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class EmployeeMasterImpl  implements EmployeeMasterInter {
     @Autowired
@@ -24,5 +26,10 @@ public class EmployeeMasterImpl  implements EmployeeMasterInter {
     @Override
     public M_UserDemographics getUserDemographicsDetails(Integer userId) {
         return employeeMasterUserDemographicRepo.findByUserID(userId);
+    }
+
+    @Override
+    public List<M_User> getAllUsers() {
+        return employeeMasterRepo.findAll();
     }
 }
