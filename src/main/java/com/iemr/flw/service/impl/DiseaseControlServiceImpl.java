@@ -110,9 +110,9 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
         return "Fail";
     }
 
-    private DiseaseAesje saveASEDisease(DiseaseAesjeDto diseaseControlData) {
+    private ScreeningAesje saveASEDisease(DiseaseAesjeDto diseaseControlData) {
         // Create a new DiseaseAesje entity from the DTO data
-        DiseaseAesje diseaseAesje = new DiseaseAesje();
+        ScreeningAesje diseaseAesje = new ScreeningAesje();
 
         // Set the fields from DTO to entity
         diseaseAesje.setBenId(diseaseControlData.getBenId());
@@ -139,7 +139,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
 
     private String updateASEDisease(DiseaseAesjeDto diseaseControlData) {
         // Fetch the existing record from the database using benId
-        DiseaseAesje existingDiseaseAesje = diseaseAESJERepository.findByBenId(diseaseControlData.getBenId())
+        ScreeningAesje existingDiseaseAesje = diseaseAESJERepository.findByBenId(diseaseControlData.getBenId())
                 .orElseThrow(() -> new RuntimeException("AES/JE record not found for benId: " + diseaseControlData.getBenId()));
 
         // Update the existing entity with new values from the DTO

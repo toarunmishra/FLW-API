@@ -6,9 +6,9 @@ import lombok.Data;
 import java.util.Date;
 
 @Entity
-@Table(name = "disease_aesje", schema = "db_iemr")
+@Table(name = "screening_aesje", schema = "db_iemr")
 @Data
-public class DiseaseAesje {
+public class ScreeningAesje {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

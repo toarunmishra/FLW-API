@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Entity
-@Table(name = "disease_leprosy", schema = "db_iemr")
+@Table(name = "screening_leprosy", schema = "db_iemr")
 @Data
 public class DiseaseLeprosy {
 

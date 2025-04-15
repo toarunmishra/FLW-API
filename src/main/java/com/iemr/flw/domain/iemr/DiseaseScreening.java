@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 
 @Data
 @Entity
-@Table(name = "disease_screening",schema = "db_iemr")
+@Table(name = "screening_screening",schema = "db_iemr")
 public class DiseaseScreening {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
