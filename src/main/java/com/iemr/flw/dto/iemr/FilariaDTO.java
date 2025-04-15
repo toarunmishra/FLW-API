@@ -6,6 +6,6 @@ import java.util.List;
 @Data
 public class FilariaDTO {
      Integer userId;
-     List<DiseaseScreeningDTO> filariaLists;
+     List<DiseaseFilariasisDTO> filariaLists;
 }
 

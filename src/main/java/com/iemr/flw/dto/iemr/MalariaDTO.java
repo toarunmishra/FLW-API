@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 public class MalariaDTO {
     Integer userId;
-    List<DiseaseScreeningDTO> malariaLists;
+    List<DiseaseMalariaDTO> malariaLists;
 
 
 

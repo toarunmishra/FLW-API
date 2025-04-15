@@ -6,7 +6,7 @@ import java.util.List;
 @Data
 public class LeprosyDTO {
     Integer userId;
-    List<DiseaseScreeningDTO> leprosyLists;
+    List<DiseaseLeprosyDTO> leprosyLists;
 
 
 

@@ -6,6 +6,6 @@ import java.util.List;
 @Data
 public class KalaAzarDTO {
    Integer userId;
-   List<DiseaseScreeningDTO> kalaAzarLists;
+   List<DiseaseKalaAzarDTO> kalaAzarLists;
 }
 
