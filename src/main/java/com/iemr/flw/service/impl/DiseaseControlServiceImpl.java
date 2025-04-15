@@ -39,15 +39,13 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
     private IncentivesRepo incentivesRepo;
 
 
-
-
     @Override
     public String saveMalaria(MalariaDTO diseaseControlDTO) {
         for (DiseaseMalariaDTO diseaseControlData : diseaseControlDTO.getMalariaLists()) {
             if (diseaseMalariaRepository.findByBenId(diseaseControlData.getBenId()).isPresent()) {
                 return updateMalariaDisease(diseaseControlData);
             } else {
-                if(diseaseControlDTO.getUserId()!=null){
+                if (diseaseControlDTO.getUserId() != null) {
                     diseaseControlData.setUserId(diseaseControlData.getUserId());
                 }
                 diseaseMalariaRepository.save(saveMalariaDisease(diseaseControlData));
@@ -65,7 +63,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
             if (diseaseKalaAzarRepository.findByBenId(diseaseControlData.getBenId()).isPresent()) {
                 return updateKalaAzarDisease(diseaseControlData);
             } else {
-                if(diseaseControlDTO.getUserId()!=null){
+                if (diseaseControlDTO.getUserId() != null) {
                     diseaseControlData.setUserId(diseaseControlData.getUserId());
                 }
                 diseaseKalaAzarRepository.save(saveKalaAzarDisease(diseaseControlData));
@@ -84,7 +82,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
             if (diseaseAESJERepository.findByBenId(diseaseControlData.getBenId()).isPresent()) {
                 return updateASEDisease(diseaseControlData);
             } else {
-                if(diseaseControlDTO.getUserId()!=null){
+                if (diseaseControlDTO.getUserId() != null) {
                     diseaseControlData.setUserId(diseaseControlData.getUserId());
                 }
                 diseaseAESJERepository.save(saveASEDisease(diseaseControlData));
@@ -101,7 +99,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
             if (diseaseFilariasisRepository.findByBenId(diseaseControlData.getBenId()).isPresent()) {
                 return updateFilaria(diseaseControlData);
             } else {
-                if(diseaseControlDTO.getUserId()!=null){
+                if (diseaseControlDTO.getUserId() != null) {
                     diseaseControlData.setUserId(diseaseControlData.getUserId());
                 }
                 diseaseFilariasisRepository.save(saveFilariasisData(diseaseControlData));
@@ -170,8 +168,6 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
     }
 
 
-
-
     private DiseaseFilariasis saveFilariasisData(DiseaseFilariasisDTO diseaseControlData) {
         // Create a new DiseaseFilariasis entity from the DTO data
         DiseaseFilariasis diseaseFilariasis = new DiseaseFilariasis();
@@ -226,7 +222,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
             if (diseaseLeprosyRepository.findByBenId(diseaseControlData.getBenId()).isPresent()) {
                 return updateLeprosyData(diseaseControlData);
             } else {
-                if(diseaseControlDTO.getUserId()!=null){
+                if (diseaseControlDTO.getUserId() != null) {
                     diseaseControlData.setUserId(diseaseControlData.getUserId());
                 }
                 diseaseLeprosyRepository.save(saveLeprosyData(diseaseControlData));
@@ -353,8 +349,6 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
 
         return diseaseAESJERepository.findAll();
     }
-
-
 
 
     @Override
@@ -498,7 +492,6 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
     }
 
 
-    
     private DiseaseLeprosy saveLeprosyData(DiseaseLeprosyDTO diseaseControlData) {
         DiseaseLeprosy diseaseLeprosy = new DiseaseLeprosy();
 
@@ -520,7 +513,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
         return diseaseLeprosy;
     }
 
-    private String  updateLeprosyData(DiseaseLeprosyDTO diseaseControlData) {
+    private String updateLeprosyData(DiseaseLeprosyDTO diseaseControlData) {
         // Fetch the existing record from the database using the benId
         DiseaseLeprosy existingDiseaseLeprosy = diseaseLeprosyRepository.findByBenId(diseaseControlData.getBenId())
                 .orElseThrow(() -> new RuntimeException("Leprosy record not found for benId: " + diseaseControlData.getBenId()));
@@ -543,41 +536,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
         return "Data update successfully";
     }
 
-
-
-    private String updateMalariaDisease(DiseaseMalariaDTO requestData) {
-        return diseaseMalariaRepository.findByBenId(requestData.getBenId()).map(diseaseScreening -> {
-            diseaseScreening.setBenId(requestData.getBenId());
-            diseaseScreening.setHouseHoldDetailsId(requestData.getHouseHoldDetailsId());
-            diseaseScreening.setScreeningDate(requestData.getScreeningDate());
-            diseaseScreening.setBeneficiaryStatus(requestData.getBeneficiaryStatus());
-            diseaseScreening.setDateOfDeath(requestData.getDateOfDeath());
-            diseaseScreening.setPlaceOfDeath(requestData.getPlaceOfDeath());
-            diseaseScreening.setOtherPlaceOfDeath(requestData.getOtherPlaceOfDeath());
-            diseaseScreening.setReasonForDeath(requestData.getReasonForDeath());
-            diseaseScreening.setOtherReasonForDeath(requestData.getOtherReasonForDeath());
-            diseaseScreening.setDiseaseTypeId(requestData.getDiseaseTypeId());
-            diseaseScreening.setSymptoms(convertSelecteddiseaseScreeningToJson(requestData)); // Convert specific fields to JSON
-
-            diseaseScreening.setCaseStatus(requestData.getCaseStatus());
-            diseaseScreening.setRapidDiagnosticTest(requestData.getRapidDiagnosticTest());
-            diseaseScreening.setDateOfRdt(requestData.getDateOfRdt());
-            diseaseScreening.setSlideTestPf(requestData.getSlideTestPf());
-            diseaseScreening.setSlideTestPv(requestData.getSlideTestPv());
-            diseaseScreening.setDateOfSlideTest(requestData.getDateOfSlideTest());
-            diseaseScreening.setSlideNo(requestData.getSlideNo());
-            diseaseScreening.setReferredTo(requestData.getReferredTo());
-            diseaseScreening.setOtherReferredFacility(requestData.getOtherReferredFacility());
-            diseaseScreening.setRemarks(requestData.getRemarks());
-            diseaseScreening.setCreatedDate(Timestamp.valueOf(LocalDateTime.now()));
-            diseaseScreening.setDateOfVisitBySupervisor(requestData.getDateOfVisitBySupervisor());
-            diseaseMalariaRepository.save(diseaseScreening);
-            return "Data update successfully";
-
-        }).orElseThrow(() -> new RuntimeException("Data not found"));
-    }
-
-
+    // Save Malaria
     private DiseaseMalaria saveMalariaDisease(DiseaseMalariaDTO requestData) {
         DiseaseMalaria diseaseScreening = new DiseaseMalaria();
 
@@ -592,7 +551,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
         diseaseScreening.setOtherReasonForDeath(requestData.getOtherReasonForDeath());
         diseaseScreening.setDiseaseTypeId(requestData.getDiseaseTypeId());
         diseaseScreening.setSymptoms(convertSelecteddiseaseScreeningToJson(requestData)); // Convert specific fields to JSON
-
+        diseaseScreening.setUserId(requestData.getUserId());
         diseaseScreening.setCaseStatus(requestData.getCaseStatus());
         diseaseScreening.setRapidDiagnosticTest(requestData.getRapidDiagnosticTest());
         diseaseScreening.setDateOfRdt(requestData.getDateOfRdt());
@@ -610,7 +569,38 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
         return diseaseMalariaRepository.save(diseaseScreening);
     }
 
+    // Update Malaria
+    private String updateMalariaDisease(DiseaseMalariaDTO requestData) {
+        return diseaseMalariaRepository.findByBenId(requestData.getBenId()).map(diseaseScreening -> {
+            diseaseScreening.setBenId(requestData.getBenId());
+            diseaseScreening.setHouseHoldDetailsId(requestData.getHouseHoldDetailsId());
+            diseaseScreening.setScreeningDate(requestData.getScreeningDate());
+            diseaseScreening.setBeneficiaryStatus(requestData.getBeneficiaryStatus());
+            diseaseScreening.setDateOfDeath(requestData.getDateOfDeath());
+            diseaseScreening.setPlaceOfDeath(requestData.getPlaceOfDeath());
+            diseaseScreening.setOtherPlaceOfDeath(requestData.getOtherPlaceOfDeath());
+            diseaseScreening.setReasonForDeath(requestData.getReasonForDeath());
+            diseaseScreening.setOtherReasonForDeath(requestData.getOtherReasonForDeath());
+            diseaseScreening.setDiseaseTypeId(requestData.getDiseaseTypeId());
+            diseaseScreening.setSymptoms(convertSelecteddiseaseScreeningToJson(requestData)); // Convert specific fields to JSON
+            diseaseScreening.setUserId(requestData.getUserId());
+            diseaseScreening.setCaseStatus(requestData.getCaseStatus());
+            diseaseScreening.setRapidDiagnosticTest(requestData.getRapidDiagnosticTest());
+            diseaseScreening.setDateOfRdt(requestData.getDateOfRdt());
+            diseaseScreening.setSlideTestPf(requestData.getSlideTestPf());
+            diseaseScreening.setSlideTestPv(requestData.getSlideTestPv());
+            diseaseScreening.setDateOfSlideTest(requestData.getDateOfSlideTest());
+            diseaseScreening.setSlideNo(requestData.getSlideNo());
+            diseaseScreening.setReferredTo(requestData.getReferredTo());
+            diseaseScreening.setOtherReferredFacility(requestData.getOtherReferredFacility());
+            diseaseScreening.setRemarks(requestData.getRemarks());
+            diseaseScreening.setCreatedDate(Timestamp.valueOf(LocalDateTime.now()));
+            diseaseScreening.setDateOfVisitBySupervisor(requestData.getDateOfVisitBySupervisor());
+            diseaseMalariaRepository.save(diseaseScreening);
+            return "Data update successfully";
 
+        }).orElseThrow(() -> new RuntimeException("Data not found"));
+    }
 
 
     private String convertSelecteddiseaseScreeningToJson(DiseaseMalariaDTO requestData) {
@@ -633,51 +623,51 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
     }
 
 
-
-
     private void checkAndAddIncentives(DiseaseMalaria diseaseScreening) {
-        IncentiveActivity diseaseScreeningActivity =
-                incentivesRepo.findIncentiveMasterByNameAndGroup("MALARIA_1", "DISEASECONTROL");
+        IncentiveActivity diseaseScreeningActivity;
+        if (Objects.equals(diseaseScreening.getCaseStatus(), "Confirmed Case")) {
+            diseaseScreeningActivity = incentivesRepo.findIncentiveMasterByNameAndGroup("MALARIA_1", "DISEASECONTROL");
 
-        IncentiveActivity diseaseScreeningActivit2 =
-                incentivesRepo.findIncentiveMasterByNameAndGroup("MALARIA_2", "DISEASECONTROL");
+        } else {
+            diseaseScreeningActivity = incentivesRepo.findIncentiveMasterByNameAndGroup("MALARIA_2", "DISEASECONTROL");
 
+        }
 
 
         if (diseaseScreeningActivity != null) {
-            if (diseaseScreening.getDiseaseTypeId() == 1) {
-                IncentiveActivityRecord record = recordRepo
-                        .findRecordByActivityIdCreatedDateBenId(diseaseScreeningActivity.getId(), Timestamp.valueOf(diseaseScreening.getCreatedDate().toString()), diseaseScreening.getBenId().longValue());
-                if (record == null) {
-                    if(Objects.equals(diseaseScreening.getCaseStatus(), "Confirmed Case")){
-                        record = new IncentiveActivityRecord();
-                        record.setActivityId(diseaseScreeningActivity.getId());
-                        record.setCreatedDate(Timestamp.valueOf(diseaseScreening.getCreatedDate().toString()));
-                        record.setCreatedBy(diseaseScreening.getCreatedBy());
-                        record.setStartDate(Timestamp.valueOf(diseaseScreening.getCreatedDate().toString()));
-                        record.setEndDate(Timestamp.valueOf(diseaseScreening.getCreatedDate().toString()));
-                        record.setUpdatedDate(Timestamp.valueOf(diseaseScreening.getCreatedDate().toString()));
-                        record.setUpdatedBy(diseaseScreening.getCreatedBy());
-                        record.setBenId(diseaseScreening.getBenId().longValue());
-                        record.setAshaId(diseaseScreening.getUserId());
-                        record.setAmount(Long.valueOf(diseaseScreeningActivity.getRate()));
-                        recordRepo.save(record);
-                    }else {
-                        record = new IncentiveActivityRecord();
-                        record.setActivityId(diseaseScreeningActivit2.getId());
-                        record.setCreatedDate(Timestamp.valueOf(diseaseScreening.getCreatedDate().toString()));
-                        record.setCreatedBy(diseaseScreening.getCreatedBy());
-                        record.setStartDate(Timestamp.valueOf(diseaseScreening.getCreatedDate().toString()));
-                        record.setEndDate(Timestamp.valueOf(diseaseScreening.getCreatedDate().toString()));
-                        record.setUpdatedDate(Timestamp.valueOf(diseaseScreening.getCreatedDate().toString()));
-                        record.setUpdatedBy(diseaseScreening.getCreatedBy());
-                        record.setBenId(diseaseScreening.getBenId().longValue());
-                        record.setAshaId(diseaseScreening.getUserId());
-                        record.setAmount(Long.valueOf(diseaseScreeningActivit2.getRate()));
-                        recordRepo.save(record);
-                    }
-
+            IncentiveActivityRecord record = recordRepo
+                    .findRecordByActivityIdCreatedDateBenId(diseaseScreeningActivity.getId(), Timestamp.valueOf(diseaseScreening.getCreatedDate().toString()), diseaseScreening.getBenId().longValue());
+            if (record == null) {
+                if (Objects.equals(diseaseScreening.getCaseStatus(), "Confirmed Case")) {
+                    record = new IncentiveActivityRecord();
+                    record.setActivityId(diseaseScreeningActivity.getId());
+                    record.setCreatedDate(Timestamp.valueOf(diseaseScreening.getCreatedDate().toString()));
+                    record.setCreatedBy(diseaseScreening.getCreatedBy());
+                    record.setStartDate(Timestamp.valueOf(diseaseScreening.getCreatedDate().toString()));
+                    record.setEndDate(Timestamp.valueOf(diseaseScreening.getCreatedDate().toString()));
+                    record.setUpdatedDate(Timestamp.valueOf(diseaseScreening.getCreatedDate().toString()));
+                    record.setUpdatedBy(diseaseScreening.getCreatedBy());
+                    record.setBenId(diseaseScreening.getBenId().longValue());
+                    record.setAshaId(diseaseScreening.getUserId());
+                    record.setName(diseaseScreeningActivity.getName());
+                    record.setAmount(Long.valueOf(diseaseScreeningActivity.getRate()));
+                    recordRepo.save(record);
+                } else {
+                    record = new IncentiveActivityRecord();
+                    record.setActivityId(diseaseScreeningActivity.getId());
+                    record.setCreatedDate(Timestamp.valueOf(diseaseScreening.getCreatedDate().toString()));
+                    record.setCreatedBy(diseaseScreening.getCreatedBy());
+                    record.setStartDate(Timestamp.valueOf(diseaseScreening.getCreatedDate().toString()));
+                    record.setEndDate(Timestamp.valueOf(diseaseScreening.getCreatedDate().toString()));
+                    record.setUpdatedDate(Timestamp.valueOf(diseaseScreening.getCreatedDate().toString()));
+                    record.setUpdatedBy(diseaseScreening.getCreatedBy());
+                    record.setBenId(diseaseScreening.getBenId().longValue());
+                    record.setName(diseaseScreeningActivity.getName());
+                    record.setAshaId(diseaseScreening.getUserId());
+                    record.setAmount(Long.valueOf(diseaseScreeningActivity.getRate()));
+                    recordRepo.save(record);
                 }
+
             }
         }
     }
