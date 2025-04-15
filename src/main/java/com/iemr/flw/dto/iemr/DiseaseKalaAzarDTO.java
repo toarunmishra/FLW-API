@@ -27,6 +27,7 @@ public class DiseaseKalaAzarDTO {
     private String createdBy;
     private Integer userId;
     private Integer diseaseTypeId;
+    private String referToName;
+    private Integer beneficiaryStatusId;
 
-    // Getters and Setters
 }

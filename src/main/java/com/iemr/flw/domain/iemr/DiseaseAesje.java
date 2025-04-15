@@ -66,7 +66,8 @@ public class DiseaseAesje {
     @Column(name = "created_by")
     private String createdBy;
 
-
+    @Column(name = "userID")
+    private Integer userId;
 
     @Column(name = "diseaseTypeID")
     private Integer diseaseTypeId;
