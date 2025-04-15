@@ -8,7 +8,7 @@ import java.util.Date;
 @Entity
 @Table(name = "screening_filariasis", schema = "db_iemr")
 @Data
-public class DiseaseFilariasis {
+public class ScreeningFilariasis {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

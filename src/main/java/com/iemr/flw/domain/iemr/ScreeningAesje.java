@@ -72,5 +72,11 @@ public class ScreeningAesje {
     @Column(name = "diseaseTypeID")
     private Integer diseaseTypeId;
 
+    @Column(name = "refer_to_name")
+    private String referToName;
+
+    @Column(name = "beneficiary_statusId")
+    private Integer beneficiaryStatusId;
+
     // Getters and Setters
 }
