@@ -28,10 +28,6 @@ public class ScreeningKalaAzar {
     @Column(name = "visit_date")
     private Date visitDate;
 
-    @Column(name = "beneficiary_status", length = 50)
-    private String beneficiaryStatus;
-
-    @Temporal(TemporalType.DATE)
     @Column(name = "date_of_death")
     private Date dateOfDeath;
 
@@ -84,4 +80,7 @@ public class ScreeningKalaAzar {
 
     @Column(name = "beneficiary_statusId")
     private Integer beneficiaryStatusId;
+
+    @Column(name = "beneficiary_status", length = 50)
+    private String beneficiaryStatus;
 }

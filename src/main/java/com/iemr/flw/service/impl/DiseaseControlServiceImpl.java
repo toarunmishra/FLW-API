@@ -419,7 +419,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
             dto.setLeprosyStatusDate(disease.getLeprosyStatusDate());
             dto.setTypeOfLeprosy(disease.getTypeOfLeprosy());
             dto.setFollowUpDate(disease.getFollowUpDate());
-            dto.setDiseaseStatus(disease.getDiseaseStatus());
+            dto.setBeneficiaryStatus(disease.getLeprosyStatus());
             dto.setRemark(disease.getRemark());
 
             return dto;
@@ -515,7 +515,14 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
         diseaseLeprosy.setLeprosyStatusDate(diseaseControlData.getLeprosyStatusDate());
         diseaseLeprosy.setTypeOfLeprosy(diseaseControlData.getTypeOfLeprosy());
         diseaseLeprosy.setFollowUpDate(diseaseControlData.getFollowUpDate());
-        diseaseLeprosy.setDiseaseStatus(diseaseControlData.getDiseaseStatus());
+
+        diseaseLeprosy.setBeneficiaryStatus(diseaseControlData.getBeneficiaryStatus());
+        diseaseLeprosy.setBeneficiaryStatusId(diseaseControlData.getBeneficiaryStatusId());
+        diseaseLeprosy.setReferToName(diseaseControlData.getReferToName());
+        diseaseLeprosy.setPlaceOfDeath(diseaseControlData.getPlaceOfDeath());
+        diseaseLeprosy.setDateOfDeath(diseaseControlData.getDateOfDeath());
+        diseaseLeprosy.setOtherPlaceOfDeath(diseaseControlData.getOtherPlaceOfDeath());
+        diseaseLeprosy.setOtherReasonForDeath(diseaseControlData.getOtherReasonForDeath());
         diseaseLeprosy.setRemark(diseaseControlData.getRemark());
 
 
@@ -537,7 +544,13 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
         existingDiseaseLeprosy.setLeprosyStatusDate(diseaseControlData.getLeprosyStatusDate());
         existingDiseaseLeprosy.setTypeOfLeprosy(diseaseControlData.getTypeOfLeprosy());
         existingDiseaseLeprosy.setFollowUpDate(diseaseControlData.getFollowUpDate());
-        existingDiseaseLeprosy.setDiseaseStatus(diseaseControlData.getDiseaseStatus());
+        existingDiseaseLeprosy.setBeneficiaryStatus(diseaseControlData.getBeneficiaryStatus());
+        existingDiseaseLeprosy.setBeneficiaryStatusId(diseaseControlData.getBeneficiaryStatusId());
+        existingDiseaseLeprosy.setReferToName(diseaseControlData.getReferToName());
+        existingDiseaseLeprosy.setPlaceOfDeath(diseaseControlData.getPlaceOfDeath());
+        existingDiseaseLeprosy.setDateOfDeath(diseaseControlData.getDateOfDeath());
+        existingDiseaseLeprosy.setOtherPlaceOfDeath(diseaseControlData.getOtherPlaceOfDeath());
+        existingDiseaseLeprosy.setOtherReasonForDeath(diseaseControlData.getOtherReasonForDeath());
         existingDiseaseLeprosy.setRemark(diseaseControlData.getRemark());
 
         diseaseLeprosyRepository.save(existingDiseaseLeprosy);

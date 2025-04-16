@@ -9,7 +9,6 @@ import java.util.Date;
 @Table(name = "screening_leprosy", schema = "db_iemr")
 @Data
 public class ScreeningLeprosy {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -45,9 +44,6 @@ public class ScreeningLeprosy {
     @Column(name = "follow_up_date")
     private Date followUpDate;
 
-    @Column(name = "disease_status", length = 225)
-    private String diseaseStatus;
-
     @Column(name = "remark", length = 225)
     private String remark;
 
@@ -56,5 +52,28 @@ public class ScreeningLeprosy {
 
     @Column(name = "userID")
     private Integer userId;
-    // Getters and Setters
+
+    @Column(name = "refer_to_name")
+    private String referToName;
+
+    @Column(name = "beneficiary_statusId")
+    private Integer beneficiaryStatusId;
+
+    @Column(name = "beneficiary_status", length = 50)
+    private String beneficiaryStatus;
+
+    @Column(name = "date_of_death")
+    private Date dateOfDeath;
+
+    @Column(name = "place_of_death", length = 50)
+    private String placeOfDeath;
+
+    @Column(name = "other_place_of_death", columnDefinition = "TEXT")
+    private String otherPlaceOfDeath;
+
+    @Column(name = "reason_for_death", length = 50)
+    private String reasonForDeath;
+
+    @Column(name = "other_reason_for_death", columnDefinition = "TEXT")
+    private String otherReasonForDeath;
 }
