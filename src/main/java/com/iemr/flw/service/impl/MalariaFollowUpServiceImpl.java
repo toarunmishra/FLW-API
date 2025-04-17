@@ -35,15 +35,7 @@ public class MalariaFollowUpServiceImpl implements MalariaFollowUpService {
                return "Referral date must be after treatment start date.";
            }
 
-           if ("Pf".equalsIgnoreCase(dto.getTreatmentGiven()) &&
-                   !(dto.getPfDay1() || dto.getPvDay2() || dto.getPfDay3())) {
-               return "At least one Pf day must be selected.";
-           }
 
-           if ("Pv".equalsIgnoreCase(dto.getTreatmentGiven()) &&
-                   !(dto.getPfDay1() || dto.getPvDay2() || dto.getPfDay3()|| dto.getPvDay4())) {
-               return "At least one Pv day must be selected.";
-           }
 
            MalariaFollowUp entity = new MalariaFollowUp();
            BeanUtils.copyProperties(dto, entity);
