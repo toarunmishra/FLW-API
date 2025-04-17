@@ -4,6 +4,7 @@ import com.iemr.flw.dto.iemr.UserServiceRoleDTO;
 import com.iemr.flw.service.UserService;
 import com.iemr.flw.utils.ApiResponse;
 
+import com.iemr.flw.utils.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 
 import org.slf4j.Logger;
@@ -21,7 +22,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
     @CrossOrigin()
     @Operation(summary = "get user Detail of userId and roleId")
     @RequestMapping(value = {"/getUserDetail"}, method = {RequestMethod.GET})
