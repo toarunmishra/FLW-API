@@ -22,6 +22,8 @@
 package com.iemr.flw.utils;
 
 import com.iemr.flw.utils.config.ConfigProperties;
+import com.iemr.flw.utils.gateway.email.EmailService;
+import com.iemr.flw.utils.gateway.email.GenericEmailServiceImpl;
 import com.iemr.flw.utils.redis.RedisStorage;
 import com.iemr.flw.utils.sessionobject.SessionObject;
 import com.iemr.flw.utils.validator.Validator;
@@ -41,11 +43,11 @@ public class FLWApplBeans {
 		return validator;
 	}
 
-//	@Bean
-//	public EmailService getEmailService() {
-//		EmailService emailService = new GenericEmailServiceImpl();
-//		return emailService;
-//	}
+	@Bean
+	public EmailService getEmailService() {
+		EmailService emailService = new GenericEmailServiceImpl();
+		return emailService;
+	}
 
 	@Bean
 	public JavaMailSender getJavaMailSender() {

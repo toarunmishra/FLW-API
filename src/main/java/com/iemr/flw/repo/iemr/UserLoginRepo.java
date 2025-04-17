@@ -29,10 +29,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserLoginRepo extends CrudRepository<M_User, Long> {
-	@Query(" SELECT u FROM Users u WHERE u.userName = :UserName AND u.deleted = false ")
+	@Query(" SELECT u FROM M_User u WHERE u.userName = :UserName AND u.deleted = false ")
 	public M_User getUserByUsername(@Param("UserName") String username);
 	
-	@Query(" SELECT u FROM Users u WHERE u.userID = :userID AND u.deleted = false ")
+	@Query(" SELECT u FROM M_User u WHERE u.userID = :userID AND u.deleted = false ")
 	public M_User getUserByUserID(@Param("userID") Long userID);
 
 }
