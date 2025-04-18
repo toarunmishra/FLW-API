@@ -50,7 +50,7 @@ public class ScreeningAesje {
     @Column(name = "aes_je_case_count")
     private Integer aesJeCaseCount = 0;
 
-    @Column(name = "follow_up_point", columnDefinition = "INT CHECK (follow_up_point between 1 and 6)")
+    @Column(name = "follow_up_point")
     private Integer followUpPoint;
 
     @Column(name = "referred_to")
@@ -59,7 +59,6 @@ public class ScreeningAesje {
     @Column(name = "other_referred_facility")
     private String otherReferredFacility;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_date")
     private Date createdDate = new Date();
 

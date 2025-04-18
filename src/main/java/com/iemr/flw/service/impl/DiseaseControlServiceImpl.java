@@ -1,10 +1,14 @@
 package com.iemr.flw.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.iemr.flw.controller.CoupleController;
 import com.iemr.flw.domain.iemr.*;
 import com.iemr.flw.dto.iemr.*;
+import com.iemr.flw.masterEnum.DiseaseType;
 import com.iemr.flw.repo.iemr.*;
 import com.iemr.flw.service.DiseaseControlService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +42,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
     @Autowired
     private IncentivesRepo incentivesRepo;
 
+    private final Logger logger = LoggerFactory.getLogger(CoupleController.class);
 
     @Override
     public String saveMalaria(MalariaDTO diseaseControlDTO) {
@@ -59,6 +64,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
 
     @Override
     public String saveKalaAzar(KalaAzarDTO diseaseControlDTO) {
+        logger.info("Save request: "+diseaseControlDTO.toString());
         for (DiseaseKalaAzarDTO diseaseControlData : diseaseControlDTO.getKalaAzarLists()) {
             if (diseaseKalaAzarRepository.findByBenId(diseaseControlData.getBenId()).isPresent()) {
                 return updateKalaAzarDisease(diseaseControlData);
@@ -95,6 +101,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
 
     @Override
     public String saveFilaria(FilariaDTO diseaseControlDTO) {
+
         for (DiseaseFilariasisDTO diseaseControlData : diseaseControlDTO.getFilariaLists()) {
             if (diseaseFilariasisRepository.findByBenId(diseaseControlData.getBenId()).isPresent()) {
                 return updateFilaria(diseaseControlData);
@@ -134,6 +141,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
         diseaseAesje.setCreatedBy(diseaseControlData.getCreatedBy());
         diseaseAesje.setBeneficiaryStatusId(diseaseControlData.getBeneficiaryStatusId());
         diseaseAesje.setReferToName(diseaseControlData.getReferToName());
+        diseaseAesje.setUserId(diseaseControlData.getUserId());
 
         // Return the new entity to be saved
         return diseaseAesje;
@@ -189,6 +197,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
         diseaseFilariasis.setOtherSideEffectDetails(diseaseControlData.getOtherSideEffectDetails());
         diseaseFilariasis.setCreatedDate(new Timestamp(System.currentTimeMillis())); // Set current timestamp
         diseaseFilariasis.setCreatedBy(diseaseControlData.getCreatedBy());
+        diseaseFilariasis.setUserId(diseaseControlData.getUserId());
 
         // Return the new entity to be saved
         return diseaseFilariasis;
@@ -237,7 +246,6 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
         return "Fail";
     }
 
-    @Override
     public Object getAllMalaria(GetDiseaseRequestHandler getDiseaseRequestHandler) {
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -305,6 +313,28 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
     }
 
     @Override
+    public Object getAllScreeningData(GetDiseaseRequestHandler getDiseaseRequestHandler) {
+
+
+        if (getDiseaseRequestHandler.getDiseaseTypeID() == DiseaseType.MALARIA.getId()) {
+            return getAllMalaria(getDiseaseRequestHandler);
+
+        } else if (getDiseaseRequestHandler.getDiseaseTypeID() == DiseaseType.KALA_AZAR.getId()) {
+            return getAllKalaAzar(getDiseaseRequestHandler);
+
+        } else if (getDiseaseRequestHandler.getDiseaseTypeID() == DiseaseType.AES_JE.getId()) {
+            return getAllKalaAES(getDiseaseRequestHandler);
+
+        } else if (getDiseaseRequestHandler.getDiseaseTypeID() == DiseaseType.FILARIA.getId()) {
+            return getAllFilaria(getDiseaseRequestHandler);
+
+        } else if (getDiseaseRequestHandler.getDiseaseTypeID() == DiseaseType.LEPROSY.getId()) {
+            return getAllLeprosy(getDiseaseRequestHandler);
+
+        }
+        return "No data found";
+    }
+
     public Object getAllKalaAzar(GetDiseaseRequestHandler getDiseaseRequestHandler) {
 
         // Fetch and filter Kala Azar disease records
@@ -341,6 +371,8 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
             dto.setCreatedBy(disease.getCreatedBy());
             dto.setBeneficiaryStatusId(disease.getBeneficiaryStatusId());
             dto.setReferToName(disease.getReferToName());
+            dto.setUserId(disease.getUserId());
+            dto.setDiseaseTypeId(disease.getDiseaseTypeId());
 
             return dto;
         }).collect(Collectors.toList());
@@ -349,20 +381,19 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
     }
 
 
-    @Override
     public Object getAllKalaAES(GetDiseaseRequestHandler getDiseaseRequestHandler) {
+        if (diseaseAESJERepository.findAll().isEmpty()) {
+            return Collections.singletonMap("message", "No data found for AES.");
+        }
 
         return diseaseAESJERepository.findAll().stream().filter(diseaseAesje -> Objects.equals(diseaseAesje.getUserId(), getDiseaseRequestHandler.getUserId())).collect(Collectors.toList());
     }
 
 
-    @Override
     public Object getAllFilaria(GetDiseaseRequestHandler getDiseaseRequestHandler) {
 
         // Fetch and filter Filaria disease records
-        List<ScreeningFilariasis> filteredList = diseaseFilariasisRepository.findAll().stream()
-                .filter(disease -> Objects.equals(disease.getUserId(), getDiseaseRequestHandler.getUserId()))
-                .collect(Collectors.toList());
+        List<ScreeningFilariasis> filteredList = diseaseFilariasisRepository.findAll().stream().filter(screeningFilariasis -> Objects.equals(screeningFilariasis.getUserId(), getDiseaseRequestHandler.getUserId())).collect(Collectors.toList());
 
         // Check if the list is empty
         if (filteredList.isEmpty()) {
@@ -385,6 +416,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
             dto.setOtherSideEffectDetails(disease.getOtherSideEffectDetails());
             dto.setCreatedDate(disease.getCreatedDate());
             dto.setCreatedBy(disease.getCreatedBy());
+            dto.setUserId(disease.getUserId());
 
             return dto;
         }).collect(Collectors.toList());
@@ -393,7 +425,6 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
     }
 
 
-    @Override
     public Object getAllLeprosy(GetDiseaseRequestHandler getDiseaseRequestHandler) {
 
         // Fetch and filter Leprosy disease records
@@ -421,6 +452,8 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
             dto.setFollowUpDate(disease.getFollowUpDate());
             dto.setBeneficiaryStatus(disease.getLeprosyStatus());
             dto.setRemark(disease.getRemark());
+            dto.setUserId(disease.getUserId());
+
 
             return dto;
         }).collect(Collectors.toList());
@@ -430,6 +463,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
 
 
     private ScreeningKalaAzar saveKalaAzarDisease(DiseaseKalaAzarDTO dto) {
+        logger.info("KalaAzarRequest: "+dto);
         ScreeningKalaAzar entity = new ScreeningKalaAzar();
 
         entity.setBenId(dto.getBenId());
@@ -454,6 +488,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
         entity.setBeneficiaryStatusId(dto.getBeneficiaryStatusId());
         entity.setReferToName(dto.getReferToName());
         entity.setUserId(dto.getUserId());
+
 
         ScreeningKalaAzar saved = diseaseKalaAzarRepository.save(entity);
 
@@ -515,7 +550,6 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
         diseaseLeprosy.setLeprosyStatusDate(diseaseControlData.getLeprosyStatusDate());
         diseaseLeprosy.setTypeOfLeprosy(diseaseControlData.getTypeOfLeprosy());
         diseaseLeprosy.setFollowUpDate(diseaseControlData.getFollowUpDate());
-
         diseaseLeprosy.setBeneficiaryStatus(diseaseControlData.getBeneficiaryStatus());
         diseaseLeprosy.setBeneficiaryStatusId(diseaseControlData.getBeneficiaryStatusId());
         diseaseLeprosy.setReferToName(diseaseControlData.getReferToName());
@@ -524,6 +558,7 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
         diseaseLeprosy.setOtherPlaceOfDeath(diseaseControlData.getOtherPlaceOfDeath());
         diseaseLeprosy.setOtherReasonForDeath(diseaseControlData.getOtherReasonForDeath());
         diseaseLeprosy.setRemark(diseaseControlData.getRemark());
+        diseaseLeprosy.setUserId(diseaseControlData.getUserId());
 
 
         return diseaseLeprosy;
@@ -618,6 +653,8 @@ public class DiseaseControlServiceImpl implements DiseaseControlService {
             diseaseScreening.setRemarks(requestData.getRemarks());
             diseaseScreening.setCreatedDate(Timestamp.valueOf(LocalDateTime.now()));
             diseaseScreening.setDateOfVisitBySupervisor(requestData.getDateOfVisitBySupervisor());
+            diseaseScreening.setReferToName(requestData.getReferToName());
+            diseaseScreening.setCaseStatusId(requestData.getCaseStatusId());
             diseaseMalariaRepository.save(diseaseScreening);
             return "Data update successfully";
 

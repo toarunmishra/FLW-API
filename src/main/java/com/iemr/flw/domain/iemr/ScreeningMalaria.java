@@ -79,7 +79,6 @@ public class ScreeningMalaria {
     @Column(name = "remarks")
     private String remarks;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "date_of_visit_by_supervisor")
     private Date dateOfVisitBySupervisor;
 
@@ -89,14 +88,12 @@ public class ScreeningMalaria {
     @Column(name = "userID")
     private Integer userId;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_date")
     private Date createdDate;
 
     @Column(name = "created_by")
     private String createdBy;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "date_of_visit_supervisor")
     private Date dateOfVisitSupervisor;
 
