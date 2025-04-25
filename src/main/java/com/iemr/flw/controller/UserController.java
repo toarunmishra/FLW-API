@@ -37,4 +37,6 @@ public class UserController {
                     new ApiResponse(false, "Error in fetching user role, " + e.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
 }
