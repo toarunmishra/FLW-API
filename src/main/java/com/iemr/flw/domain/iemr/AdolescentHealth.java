@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Data
-@Table(name = "adolescent_health")
+@Table(name = "adolescent_health",schema = "db_iemr")
 public class AdolescentHealth {
 
     @Id
