@@ -6,10 +6,11 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Data
-@Table(name = "adolescent_health",schema = "db_iemr")
+@Table(name = "adolescent_health")
 public class AdolescentHealth {
 
     @Id
@@ -20,10 +21,10 @@ public class AdolescentHealth {
     private BigInteger benId;
 
     @Column(name = "userID")
-    private Long userID;
+    private Integer userID;
 
     @Column(name = "visit_date")
-    private Date visitDate;
+    private Timestamp visitDate;
 
     @Column(name = "health_status")
     private String healthStatus;
@@ -61,6 +62,11 @@ public class AdolescentHealth {
     @Column(name = "referral_status")
     private String referralStatus;
 
+    @Column(name = "created_date")
+    private Timestamp createdDate;
+
+    @Column(name = "created_by")
+    private String createdBy;
 
 
 }
