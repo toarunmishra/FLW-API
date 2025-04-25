@@ -1,6 +1,7 @@
 package com.iemr.flw.service.impl;
 
 import com.iemr.flw.domain.iemr.AdolescentHealth;
+import com.iemr.flw.dto.identity.GetBenRequestHandler;
 import com.iemr.flw.dto.iemr.AdolescentHealthDTO;
 import com.iemr.flw.repo.iemr.AdolescentHealthRepo;
 import com.iemr.flw.service.AdolescentHealthService;
@@ -37,9 +38,9 @@ public class AdolescentHealthServiceImpl implements AdolescentHealthService {
 
 
 
-    public List<AdolescentHealth> getAllAdolescentHealth() {
+    public List<AdolescentHealth> getAllAdolescentHealth(GetBenRequestHandler getBenRequestHandler) {
         // Fetch all records from the database
-        List<AdolescentHealth> adolescentHealths = adolescentHealthRepo.findAll();
+        List<AdolescentHealth> adolescentHealths = adolescentHealthRepo.findAll().stream().filter(adolescentHealth -> adolescentHealth.getUserID().equals(getBenRequestHandler.getUserId())).collect(Collectors.toList());
 
         // Convert the list of entity objects to DTO objects
         return adolescentHealths.stream()
@@ -65,7 +66,6 @@ public class AdolescentHealthServiceImpl implements AdolescentHealthService {
         existingAdolescentHealth.setCounselingType(adolescentHealth.getCounselingType());
         existingAdolescentHealth.setFollowUpDate(adolescentHealth.getFollowUpDate());
         existingAdolescentHealth.setReferralStatus(adolescentHealth.getReferralStatus());
-        existingAdolescentHealth.setIncentiveAmount(adolescentHealth.getIncentiveAmount());
 
         // Save the updated record back to the database
         adolescentHealthRepo.save(existingAdolescentHealth);
@@ -89,7 +89,6 @@ public class AdolescentHealthServiceImpl implements AdolescentHealthService {
         dto.setCounselingType(adolescentHealth.getCounselingType());
         dto.setFollowUpDate(adolescentHealth.getFollowUpDate());
         dto.setReferralStatus(adolescentHealth.getReferralStatus());
-        dto.setIncentiveAmount(adolescentHealth.getIncentiveAmount());
         return dto;
     }
 }

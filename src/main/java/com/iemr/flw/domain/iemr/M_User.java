@@ -89,6 +89,7 @@ public class M_User {
     @Expose
     @Column(name="IsSupervisor")
     private Boolean isSupervisor;
+
     @Expose
     @Column(name="Deleted",insertable = false, updatable = true)
     private Boolean deleted;

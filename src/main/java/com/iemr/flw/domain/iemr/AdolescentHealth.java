@@ -9,7 +9,7 @@ import java.sql.Date;
 
 @Entity
 @Data
-@Table(name = "adolescent_health")
+@Table(name = "adolescent_health",schema = "db_iemr")
 public class AdolescentHealth {
 
     @Id
@@ -61,8 +61,6 @@ public class AdolescentHealth {
     @Column(name = "referral_status")
     private String referralStatus;
 
-    @Column(name = "incentive_amount")
-    private BigDecimal incentiveAmount;
 
 
 }
