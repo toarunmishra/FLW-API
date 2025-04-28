@@ -1,6 +1,7 @@
 package com.iemr.flw.service;
 
 import com.iemr.flw.domain.iemr.VillageFormEntry;
+import com.iemr.flw.dto.iemr.GetVillageLevelRequestHandler;
 import com.iemr.flw.dto.iemr.VhndDto;
 import com.iemr.flw.dto.iemr.VilageLevelFormDto;
 import com.iemr.flw.repo.iemr.VillageFormRepository;
@@ -17,5 +18,5 @@ public interface  VhndFormService  {
 
 
     public String submitForm(VhndDto dto) ;
-    public List<VillageFormEntry> getAll(Integer userId);
+    public Object getAll(GetVillageLevelRequestHandler getVillageLevelRequestHandler);
 }

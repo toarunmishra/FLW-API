@@ -1,8 +1,10 @@
 
 package com.iemr.flw.service.smsService;
 
-import java.util.List;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
+@Service
 
 public interface SMSGatewayService {
 	public int sendNamasteSMS(Long benRegID, String createdBy, String Authorization);

@@ -2,20 +2,18 @@ package com.iemr.flw.service.impl;
 
 import com.iemr.flw.domain.iemr.IncentiveActivity;
 import com.iemr.flw.domain.iemr.IncentiveActivityRecord;
+import com.iemr.flw.domain.iemr.VHNDForm;
 import com.iemr.flw.domain.iemr.VillageFormEntry;
 import com.iemr.flw.dto.iemr.*;
 import com.iemr.flw.repo.iemr.*;
-import com.iemr.flw.service.IncentiveService;
 import com.iemr.flw.service.VhndFormService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -49,7 +47,7 @@ public class VhndFormServiceImpl implements VhndFormService {
             entry.setDate(dto.getDate());
             entry.setPlace(dto.getPlace());
             entry.setParticipantCount(dto.getParticipantCount());
-            entry.setImageUrls(dto.getImageUrls());
+          //  entry.setImageUrls(dto.getImageUrls());
             entry.setSubmittedAt(LocalDateTime.now());
             entry.setCreatedDate(Date.valueOf(LocalDate.now()));
             entry.setCreatedBy(dto.getCreatedBy());
@@ -67,15 +65,16 @@ public class VhndFormServiceImpl implements VhndFormService {
 
     @Override
     public String submitForm(VhndDto dto) {
-        for (VHNDFormDTO vhndFormDTO : dto.getEntires()) {
-            saveVhndFormData(vhndFormDTO);
+        for (VHNDFormDTO vhndFormDTO : dto.getEntries()) {
+            saveVhndFormData(vhndFormDTO,dto.getUserId());
 
         }
         return "Fail" ;
     }
 
-    private String saveVhndFormData(VHNDFormDTO vhndFormDTO) {
+    private String saveVhndFormData(VHNDFormDTO vhndFormDTO,Integer userID) {
         VHNDForm vhndForm = new VHNDForm();
+        vhndForm.setUserId(userID);
         vhndForm.setVhndDate(vhndFormDTO.getVhndDate());
         vhndForm.setImage2(vhndFormDTO.getImage2());
         vhndForm.setImage1(vhndFormDTO.getImage1());
@@ -90,8 +89,11 @@ public class VhndFormServiceImpl implements VhndFormService {
     }
 
     @Override
-    public List<VillageFormEntry> getAll(Integer userId) {
-        return repository.findAll().stream().filter(villageFormEntry -> villageFormEntry.getUserId().equals(userId)).collect(Collectors.toList());
+    public Object getAll(GetVillageLevelRequestHandler getVillageLevelRequestHandler) {
+        if(Objects.equals(getVillageLevelRequestHandler.getFormType(), "VHND")){
+            return vhndRepo.findAll().stream().filter(vhndForm -> Objects.equals(vhndForm.getUserId(),getVillageLevelRequestHandler.getUserId())).collect(Collectors.toList());
+        }
+        return null;
     }
 
 
@@ -101,7 +103,7 @@ public class VhndFormServiceImpl implements VhndFormService {
 
         if (villageFormEntryActivity != null) {
             IncentiveActivityRecord record = recordRepo
-                    .findRecordByActivityIdCreatedDateBenId(villageFormEntryActivity.getId(), Timestamp.valueOf(villageFormEntry.getVhndDate().toString()));
+                    .findRecordByActivityIdCreatedDateBenId(villageFormEntryActivity.getId(), Timestamp.valueOf(villageFormEntry.getVhndDate().toString()),null);
             if (record == null) {
                 record = new IncentiveActivityRecord();
                 record.setActivityId(villageFormEntryActivity.getId());

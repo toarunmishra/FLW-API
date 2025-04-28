@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class VHNDFormDTO {
+    private Integer id;
     private String vhndDate;
     private String place;
     private Integer noOfBeneficiariesAttended;
