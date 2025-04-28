@@ -35,8 +35,12 @@ public class VillageFormEntry {
     @Column(name = "participant_count")
     private int participantCount;
 
-    @Column(name = "image_urls")
-    private String imageUrls;
+    @Column(name = "image_url1")
+    private String imageUrl1;
+
+
+    @Column(name = "image_url2")
+    private String imageUrl2;
 
 
     @Column(name = "submitted_at")

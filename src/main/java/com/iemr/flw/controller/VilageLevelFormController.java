@@ -1,6 +1,7 @@
 package com.iemr.flw.controller;
 
 import com.iemr.flw.dto.identity.GetBenRequestHandler;
+import com.iemr.flw.dto.iemr.GetVillageLevelRequestHandler;
 import com.iemr.flw.dto.iemr.VilageLevelFormDto;
 import com.iemr.flw.service.VhndFormService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value = "/forms/vilageLevel")
+@RequestMapping(value = "/forms/villageLevel")
 public class VilageLevelFormController {
 
     @Autowired
@@ -28,11 +29,11 @@ public class VilageLevelFormController {
 
 
     @RequestMapping(value = "getAll",method = RequestMethod.POST)
-    public ResponseEntity<Map<String, Object>> getVilageLevelFormData(@RequestBody GetBenRequestHandler getBenRequestHandler) {
+    public ResponseEntity<Map<String, Object>> getVilageLevelFormData(@RequestBody GetVillageLevelRequestHandler getVillageLevelRequestHandler) {
         Map<String, Object> response = new HashMap<>();
         response.put("status", "Success");
         response.put("statusCode", 200);
-        response.put("data", vhndFormService.getAll(getBenRequestHandler.getUserId()));
+        response.put("data", vhndFormService.getAll(getVillageLevelRequestHandler.getUserId(),getVillageLevelRequestHandler.getFormType()));
         return ResponseEntity.ok(response);
     }
 

@@ -11,7 +11,8 @@ public class VilageLevelFormListDto {
     private Date date;
     private String place;
     private int participantCount;
-    private String imageUrls; // Comma separated URLs or Base64 if needed
+    private String imageUrl1; // Comma separated URLs or Base64 if needed
+    private String imageUrl2; // Comma separated URLs or Base64 if needed
     private String  createdBy;
     private boolean dewormingRound;
     private Integer age;

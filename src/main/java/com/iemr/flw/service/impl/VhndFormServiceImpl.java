@@ -50,10 +50,13 @@ public class VhndFormServiceImpl implements VhndFormService {
             entry.setDate(dto.getDate());
             entry.setPlace(dto.getPlace());
             entry.setParticipantCount(dto.getParticipantCount());
-            entry.setImageUrls(dto.getImageUrls());
+            entry.setImageUrl1(dto.getImageUrl1());
+            entry.setImageUrl1(dto.getImageUrl1());
             entry.setSubmittedAt(LocalDateTime.now());
             entry.setCreatedDate(Date.valueOf(LocalDate.now()));
             entry.setCreatedBy(dto.getCreatedBy());
+            entry.setAge(dto.getAge());
+            entry.setDewormingRound(dto.isDewormingRound());
 
             repository.save(entry);
             checkAndAddIncentives(entry);
@@ -67,8 +70,8 @@ public class VhndFormServiceImpl implements VhndFormService {
     }
 
     @Override
-    public List<VillageFormEntry> getAll(Integer userId) {
-        return repository.findAll().stream().filter(villageFormEntry -> villageFormEntry.getUserId().equals(userId)).collect(Collectors.toList());
+    public List<VillageFormEntry> getAll(Integer userId,String formType) {
+        return repository.findAll().stream().filter(villageFormEntry -> (villageFormEntry.getUserId().equals(userId)|| villageFormEntry.getFormType().equals(formType))).collect(Collectors.toList());
     }
 
 

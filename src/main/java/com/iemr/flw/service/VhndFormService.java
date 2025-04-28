@@ -16,5 +16,5 @@ public interface  VhndFormService  {
 
 
     public String submitForm(VilageLevelFormDto dto) ;
-    public List<VillageFormEntry> getAll(Integer userId);
+    public List<VillageFormEntry> getAll(Integer userId,String formType);
 }
