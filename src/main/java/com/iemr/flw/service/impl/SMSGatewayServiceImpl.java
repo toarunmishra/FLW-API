@@ -20,6 +20,7 @@
 * along with this program.  If not, see https://www.gnu.org/licenses/.
 */
 package com.iemr.flw.service.impl;
+import com.google.gson.Gson;
 import com.iemr.flw.service.smsService.SMSGatewayService;
 import com.iemr.flw.utils.CookieUtil;
 import org.slf4j.Logger;
@@ -29,6 +30,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
 
 @Service
 @PropertySource("classpath:application.properties")
@@ -52,11 +55,57 @@ public class SMSGatewayServiceImpl implements SMSGatewayService {
 
 	@Override
 	public int sendNamasteSMS(Long benRegID, String createdBy, String Authorization) {
+
 		return 0;
 	}
 
 	@Override
 	public int sendWelcomeSMS(Long benRegID, String createdBy, String Authorization) {
 		return 0;
+	}
+
+	@Override
+	public String createSMSRequest(String smsType, Long benRegID) {
+//		SmsRequestOBJ obj = null;
+//		ArrayList<SmsRequestOBJ> objList = new ArrayList<>();
+//
+//		int smsTypeID;
+//
+//		switch (smsType) {
+//			case "schedule":
+//				smsTypeID = tCRequestModelRepo.getSMSTypeID(schedule);
+//				break;
+//			case "cancel":
+//				smsTypeID = tCRequestModelRepo.getSMSTypeID(cancel);
+//				break;
+//			case "reSchedule":
+//				smsTypeID = tCRequestModelRepo.getSMSTypeID(reSchedule);
+//				break;
+//			default:
+//				smsTypeID = 0;
+//		}
+//
+//		if (smsTypeID != 0) {
+//			obj = new SmsRequestOBJ();
+//			ArrayList<Integer> smsTemplateID = tCRequestModelRepo.getSMSTemplateID(smsTypeID);
+//			if (smsTemplateID != null && smsTemplateID.size() == 1)
+//				obj.setSmsTemplateID(smsTemplateID.get(0));
+//			else {
+//				obj.setSmsTemplateID(null);
+//				logger.info("Multiple SMS template created for same sms type");
+//			}
+//			obj.setBeneficiaryRegID(benRegID);
+//			obj.setSpecializationID(specializationID);
+//			obj.setSmsType(smsType);
+//			obj.setCreatedBy(createdBy);
+//			obj.setTcDate(tcDate);
+//			obj.setTcPreviousDate(tcPreviousDate);
+//
+//			objList.add(obj);
+//		}
+//		if (obj != null && obj.getSmsTemplateID() != null)
+//			return new Gson().toJson(objList);
+//		else
+			return null;
 	}
 }

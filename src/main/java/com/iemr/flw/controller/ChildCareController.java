@@ -25,7 +25,6 @@ public class ChildCareController {
     @Autowired
     private ChildCareService childCareService;
 
-    @CrossOrigin()
     @Operation(summary = "save HBYC details")
     @RequestMapping(value = { "/hbyc/saveAll" }, method = { RequestMethod.POST })
     public String saveHbycRecords(@RequestBody List<HbycDTO> hbycDTOs,
