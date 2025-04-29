@@ -141,7 +141,7 @@ public class VhndFormServiceImpl implements VhndFormService {
         phcReviewForm.setNoOfBeneficiariesAttended(dto.getNoOfBeneficiariesAttended());
         phcReviewForm.setImage1(dto.getImage1());
         phcReviewForm.setImage2(dto.getImage2());
-        phcReviewForm.setFormType("PHC Review");
+        phcReviewForm.setFormType("PHC");
         phcReviewFormRepo.save(phcReviewForm);
         checkAndAddIncentivesForPhcReview(phcReviewForm);
         return "Save PHC Review Form successfully";
@@ -155,7 +155,7 @@ public class VhndFormServiceImpl implements VhndFormService {
         ahdForm.setAhdDate(dto.getAhdDate());
         ahdForm.setImage1(dto.getImage1());
         ahdForm.setImage2(dto.getImage2());
-        ahdForm.setFormType("AHD Meeting");
+        ahdForm.setFormType("AHD");
         ahdFormRepo.save(ahdForm);
         checkAndAddIncentivesForAhd(ahdForm);
         return "Save AHD Form successfully";
