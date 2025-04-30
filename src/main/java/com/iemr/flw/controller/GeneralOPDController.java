@@ -12,7 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/general-opd")
@@ -27,25 +30,24 @@ public class GeneralOPDController {
 
     @RequestMapping(value = "/getData", method = RequestMethod.POST)
     @Operation(summary = "get beneficiary data for given user ")
-    public String getBeneficiaryDataByAsha(@RequestBody GetBenRequestHandler requestDTO,
-                                           @RequestHeader(value = "Authorization") String authorization) {
-        OutputResponse response = new OutputResponse();
+    public ResponseEntity<Map<String, Object>> getBeneficiaryDataByAsha(@RequestBody GetBenRequestHandler requestDTO,
+                                                                        @RequestHeader(value = "Authorization") String authorization) {
+        Map<String, Object> response = new LinkedHashMap<>();
         try {
-            if (requestDTO != null) {
-                logger.info("request object with timestamp : " + new Timestamp(System.currentTimeMillis()) + " "
-                        + requestDTO);
-                String s = generalOpdService.getOpdListForAsha(requestDTO, authorization);
-                if (s != null)
-                    response.setResponse(s);
-                else
-                    response.setError(5000, "No record found");
-            } else
-                response.setError(5000, "Invalid/NULL request obj");
+            Map<String, Object> data = new HashMap<>();
+            data.put("userId", requestDTO.getUserId());
+            data.put("entries", generalOpdService.getOpdListForAsha(requestDTO, authorization));
+
+            response.put("data", data);
+            response.put("statusCode", 200);
+            response.put("errorMessage", "Success");
+            response.put("status", "Success");
         } catch (Exception e) {
             logger.error("Error in get data : " + e);
-            response.setError(5000, "Error in get data : " + e);
+            response.put("status",500);
+            response.put("message", "Error in get data : " + e);
         }
-        return response.toString();
+        return ResponseEntity.ok(response);
 
     }
 } 

@@ -72,7 +72,7 @@ public class IncentiveServiceImpl implements IncentiveService {
     @Override
     public String getAllIncentivesByUserId(GetBenRequestHandler request) {
         List<IncentiveRecordDTO> dtos = new ArrayList<>();
-        List<IncentiveActivityRecord> entities = recordRepo.findRecordsByAsha(request.getAshaId(), request.getFromDate(), request.getToDate());
+        List<IncentiveActivityRecord> entities = recordRepo.findRecordsByAsha(request.getAshaId());
         entities.forEach(entry -> dtos.add(modelMapper.map(entry, IncentiveRecordDTO.class)));
 //        UserDataDTO<IncentiveRecordDTO> userDataDTO = new UserDataDTO<>();
 //        userDataDTO.setUserId(request.getAshaId());

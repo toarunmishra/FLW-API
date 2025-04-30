@@ -1,9 +1,12 @@
 package com.iemr.flw.service.impl;
 
+import com.iemr.flw.controller.CoupleController;
 import com.iemr.flw.domain.iemr.*;
 import com.iemr.flw.dto.iemr.*;
 import com.iemr.flw.repo.iemr.*;
 import com.iemr.flw.service.VhndFormService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +14,15 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
 public class VhndFormServiceImpl implements VhndFormService {
+    private final Logger logger = LoggerFactory.getLogger(CoupleController.class);
+
 
     @Autowired
     private VillageFormRepository repository;
@@ -46,51 +53,51 @@ public class VhndFormServiceImpl implements VhndFormService {
     private AHDFormRepo ahdFormRepo;
 
 
-    public String submitForm(VilageLevelFormDto vilageLevelFormDto) {
-        for (VilageLevelFormListDto dto : vilageLevelFormDto.getVilageLevelFormList()) {
-            if (dto.getUserId() == null || dto.getDate() == null || dto.getPlace() == null || dto.getParticipantCount() <= 0) {
-                return "Missing or invalid fields";
-            }
-
-
-            VillageFormEntry entry = new VillageFormEntry();
-            entry.setUserId(dto.getUserId());
-            entry.setFormType(dto.getFormType());
-            entry.setDate(dto.getDate());
-            entry.setPlace(dto.getPlace());
-            entry.setParticipantCount(dto.getParticipantCount());
-          //  entry.setImageUrls(dto.getImageUrls());
-            entry.setSubmittedAt(LocalDateTime.now());
-            entry.setCreatedDate(Date.valueOf(LocalDate.now()));
-            entry.setCreatedBy(dto.getCreatedBy());
-
-            repository.save(entry);
-            //checkAndAddIncentives(entry);
-            return "Form submitted successfully";
-
-
-        }
-        return "Fail";
-
-
-    }
 
     @Override
     public String submitForm(VhndDto dto) {
         for (VHNDFormDTO vhndFormDTO : dto.getEntries()) {
-            saveVhndFormData(vhndFormDTO,dto.getUserId());
+            saveVhndFormData(vhndFormDTO, dto.getUserId());
 
         }
-        return "Fail" ;
+        return "Fail";
     }
 
     @Override
     public String submitVhncForm(VhncDto dto) {
-        for(VhncFormDTO  vhncFormDTO : dto.getEntries()){
-            saveVhncFormData(vhncFormDTO,dto.getUserId());
+        for (VhncFormDTO vhncFormDTO : dto.getEntries()) {
+            saveVhncFormData(vhncFormDTO, dto.getUserId());
         }
         return "Fail";
     }
+
+
+
+
+    @Override
+    public String submitPhcForm(PhcReviewMeetingDTO dto) {
+        for (PhcReviewMeetingFormDTO phcReviewMeetingDTO : dto.getEntries()) {
+            submitPhcForm(phcReviewMeetingDTO, dto.getUserId());
+        }
+        return "Fail";
+    }
+
+    @Override
+    public String submitAdhForm(AhdMeetingDto dto) {
+        for (AhDMeetingFormDTO ahDMeetingFormDTO : dto.getEntries()) {
+            submitAhdForm(ahDMeetingFormDTO, dto.getUserId());
+        }
+        return "Fail";
+    }
+
+    @Override
+    public String submitDewormingForm(DewormingDto dto) {
+        for (DewormingFormDTO dewormingFormDTO : dto.getEntries()) {
+            submitDewormingForm(dewormingFormDTO, dto.getUserId());
+        }
+        return "Fail";
+    }
+
     private String saveVhncFormData(VhncFormDTO vhncFormDTO, Integer userID) {
         VhncForm vhncForm = new VhncForm();
         vhncForm.setUserId(Long.valueOf(userID));
@@ -99,38 +106,13 @@ public class VhndFormServiceImpl implements VhndFormService {
         vhncForm.setImage1(vhncFormDTO.getImage1());
         vhncForm.setPlace(vhncFormDTO.getPlace());
         vhncForm.setNoOfBeneficiariesAttended(vhncFormDTO.getNoOfBeneficiariesAttended());
+
         vhncForm.setFormType("VHNC");
-        vhncFormRepo.save(vhncForm);  // Data ko save karte hain
-        checkAndAddIncentivesForVhnc(vhncForm); // Incentives ko check karte hain
+        vhncFormRepo.save(vhncForm);
+        checkAndAddIncentives(vhncForm.getVhncDate(), Math.toIntExact(vhncForm.getUserId()), vhncForm.getFormType(),vhncForm.getCreatedBy());
+
         return "Save Vhnd Form successfully";
     }
-
-
-
-    @Override
-    public String submitPhcForm(PhcReviewMeetingDTO dto) {
-        for(PhcReviewMeetingFormDTO phcReviewMeetingDTO: dto.getEntries()){
-            submitPhcForm(phcReviewMeetingDTO,dto.getUserId());
-        }
-        return "Fail";
-    }
-
-    @Override
-    public String submitAdhForm(AhdMeetingDto dto) {
-        for(AhDMeetingFormDTO ahDMeetingFormDTO: dto.getEntries()){
-            submitAhdForm(ahDMeetingFormDTO,dto.getUserId());
-        }
-        return "Fail";
-    }
-
-    @Override
-    public String submitDewormingForm(DewormingDto dto) {
-        for(DewormingFormDTO dewormingFormDTO: dto.getEntries()){
-            submitDewormingForm(dewormingFormDTO,dto.getUserId());
-        }
-        return "Fail";
-    }
-
 
 
     private String submitPhcForm(PhcReviewMeetingFormDTO dto, Integer userID) {
@@ -143,7 +125,8 @@ public class VhndFormServiceImpl implements VhndFormService {
         phcReviewForm.setImage2(dto.getImage2());
         phcReviewForm.setFormType("PHC");
         phcReviewFormRepo.save(phcReviewForm);
-        checkAndAddIncentivesForPhcReview(phcReviewForm);
+        checkAndAddIncentives(phcReviewForm.getPhcReviewDate(), Math.toIntExact(phcReviewForm.getUserId()), phcReviewForm.getFormType(),phcReviewForm.getCreatedBy());
+
         return "Save PHC Review Form successfully";
     }
 
@@ -157,7 +140,11 @@ public class VhndFormServiceImpl implements VhndFormService {
         ahdForm.setImage2(dto.getImage2());
         ahdForm.setFormType("AHD");
         ahdFormRepo.save(ahdForm);
-        checkAndAddIncentivesForAhd(ahdForm);
+        if(Objects.equals(dto.getMobilizedForAHD(),"Yes")){
+            checkAndAddIncentives(ahdForm.getAhdDate(), Math.toIntExact(ahdForm.getUserId()), ahdForm.getFormType(),ahdForm.getCreatedBy());
+
+        }
+
         return "Save AHD Form successfully";
     }
 
@@ -172,13 +159,15 @@ public class VhndFormServiceImpl implements VhndFormService {
         dewormingForm.setImage2(dto.getImage2());
         dewormingForm.setFormType("Deworming");
         dewormingFormRepo.save(dewormingForm);
-        checkAndAddIncentivesForDeworming(dewormingForm);
+        if(Objects.equals(dewormingForm.getDewormingDone(), "Yes")){
+            checkAndAddIncentives(dewormingForm.getDewormingDate(), Math.toIntExact(dewormingForm.getUserId()), dewormingForm.getFormType(),dewormingForm.getCreatedBy());
+
+        }
         return "Save Deworming Form successfully";
     }
 
 
-
-    private String saveVhndFormData(VHNDFormDTO vhndFormDTO,Integer userID) {
+    private String saveVhndFormData(VHNDFormDTO vhndFormDTO, Integer userID) {
         VHNDForm vhndForm = new VHNDForm();
         vhndForm.setUserId(userID);
         vhndForm.setVhndDate(vhndFormDTO.getVhndDate());
@@ -188,7 +177,7 @@ public class VhndFormServiceImpl implements VhndFormService {
         vhndForm.setNoOfBeneficiariesAttended(vhndFormDTO.getNoOfBeneficiariesAttended());
         vhndForm.setFormType("VHND");
         vhndRepo.save(vhndForm);
-        checkAndAddIncentivesForVhnd(vhndForm);
+        checkAndAddIncentives(vhndForm.getVhndDate(), vhndForm.getUserId(), vhndForm.getFormType(),vhndForm.getCreatedBy());
         return "Save Vhnd Form successfully";
 
 
@@ -196,30 +185,63 @@ public class VhndFormServiceImpl implements VhndFormService {
 
     @Override
     public Object getAll(GetVillageLevelRequestHandler getVillageLevelRequestHandler) {
-        if(Objects.equals(getVillageLevelRequestHandler.getFormType(), "VHND")){
-            return vhndRepo.findAll().stream().filter(vhndForm -> Objects.equals(vhndForm.getUserId(),getVillageLevelRequestHandler.getUserId())).collect(Collectors.toList());
+        if (Objects.equals(getVillageLevelRequestHandler.getFormType(), "VHND")) {
+            return vhndRepo.findAll().stream()
+                    .filter(vhndForm -> Objects.equals(vhndForm.getUserId().toString(), getVillageLevelRequestHandler.getUserId().toString()))
+                    .collect(Collectors.toList());
+
+        } else if (Objects.equals(getVillageLevelRequestHandler.getFormType(), "VHNC")) {
+            return vhncFormRepo.findAll().stream()
+                    .filter(vhncForm -> Objects.equals(vhncForm.getUserId().toString(), getVillageLevelRequestHandler.getUserId().toString()))
+                    .collect(Collectors.toList());
+
+        } else if (Objects.equals(getVillageLevelRequestHandler.getFormType(), "PHC")) {
+            return phcReviewFormRepo.findAll().stream()
+                    .filter(phcReviewForm -> Objects.equals(phcReviewForm.getUserId().toString(), getVillageLevelRequestHandler.getUserId().toString()))
+                    .collect(Collectors.toList());
+
+        } else if (Objects.equals(getVillageLevelRequestHandler.getFormType(), "Deworming")) {
+            return dewormingFormRepo.findAll().stream()
+                    .filter(dewormingForm -> Objects.equals(dewormingForm.getUserId().toString(), getVillageLevelRequestHandler.getUserId().toString()))
+                    .collect(Collectors.toList());
+
+        } else if (Objects.equals(getVillageLevelRequestHandler.getFormType(), "AHD")) {
+            return ahdFormRepo.findAll().stream()
+                    .filter(ahdForm -> Objects.equals(ahdForm.getUserId().toString(), getVillageLevelRequestHandler.getUserId().toString()))
+                    .collect(Collectors.toList());
         }
-        return null;
+
+        return Collections.emptyList(); // In case no condition matches
+
     }
 
 
-    private void checkAndAddIncentivesForVhnd(VHNDForm villageFormEntry) {
+    private void checkAndAddIncentives(String date,Integer userID,String formType,String createdBY) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        // Parse to LocalDate
+        LocalDate localDate = LocalDate.parse(date, formatter);
+
+        // Convert to Timestamp at start of day (00:00:00)
+        Timestamp timestamp = Timestamp.valueOf(localDate.atStartOfDay());
+        logger.info("timestamp"+timestamp);
+
         IncentiveActivity villageFormEntryActivity;
-        villageFormEntryActivity = incentivesRepo.findIncentiveMasterByNameAndGroup(villageFormEntry.getFormType(), "VILLAGELEVEL");
+        villageFormEntryActivity = incentivesRepo.findIncentiveMasterByNameAndGroup(formType, "VILLAGELEVEL");
 
         if (villageFormEntryActivity != null) {
             IncentiveActivityRecord record = recordRepo
-                    .findRecordByActivityIdCreatedDateBenId(villageFormEntryActivity.getId(), Timestamp.valueOf(villageFormEntry.getVhndDate().toString()),null);
+                    .findRecordByActivityIdCreatedDateBenId(villageFormEntryActivity.getId(), timestamp, null);
             if (record == null) {
                 record = new IncentiveActivityRecord();
                 record.setActivityId(villageFormEntryActivity.getId());
-                record.setCreatedDate(Timestamp.valueOf(villageFormEntry.getVhndDate().toString()));
-                record.setCreatedBy(villageFormEntry.getCreatedBy());
-                record.setStartDate(Timestamp.valueOf(villageFormEntry.getVhndDate().toString()));
-                record.setEndDate(Timestamp.valueOf(villageFormEntry.getVhndDate().toString()));
-                record.setUpdatedDate(Timestamp.valueOf(villageFormEntry.getVhndDate().toString()));
-                record.setUpdatedBy(villageFormEntry.getCreatedBy());
-                record.setAshaId(villageFormEntry.getUserId());
+                record.setCreatedDate(timestamp);
+                record.setCreatedBy(createdBY);
+                record.setStartDate(timestamp);
+                record.setEndDate(timestamp);
+                record.setUpdatedDate(timestamp);
+                record.setUpdatedBy(createdBY);
+                record.setAshaId(userID);
                 record.setName(villageFormEntryActivity.getName());
                 record.setAmount(Long.valueOf(villageFormEntryActivity.getRate()));
                 recordRepo.save(record);
@@ -228,98 +250,6 @@ public class VhndFormServiceImpl implements VhndFormService {
         }
     }
 
-    private void checkAndAddIncentivesForVhnc(VhncForm villageFormEntry) {
-        IncentiveActivity villageFormEntryActivity;
-        villageFormEntryActivity = incentivesRepo.findIncentiveMasterByNameAndGroup(villageFormEntry.getFormType(), "VILLAGELEVEL");
 
-        if (villageFormEntryActivity != null) {
-            IncentiveActivityRecord record = recordRepo
-                    .findRecordByActivityIdCreatedDateBenId(villageFormEntryActivity.getId(), Timestamp.valueOf(villageFormEntry.getVhncDate().toString()),null);
-            if (record == null) {
-                record = new IncentiveActivityRecord();
-                record.setActivityId(villageFormEntryActivity.getId());
-                record.setCreatedDate(Timestamp.valueOf(villageFormEntry.getVhncDate().toString()));
-                record.setCreatedBy(villageFormEntry.getCreatedBy());
-                record.setStartDate(Timestamp.valueOf(villageFormEntry.getVhncDate().toString()));
-                record.setEndDate(Timestamp.valueOf(villageFormEntry.getVhncDate().toString()));
-                record.setUpdatedDate(Timestamp.valueOf(villageFormEntry.getVhncDate().toString()));
-                record.setUpdatedBy(villageFormEntry.getCreatedBy());
-                record.setAshaId(Math.toIntExact(villageFormEntry.getUserId()));
-                record.setName(villageFormEntryActivity.getName());
-                record.setAmount(Long.valueOf(villageFormEntryActivity.getRate()));
-                recordRepo.save(record);
-
-            }
-        }
-    }
-
-    private void checkAndAddIncentivesForPhcReview(PHCReviewForm phcReviewFormEntry) {
-        IncentiveActivity phcReviewFormActivity = incentivesRepo.findIncentiveMasterByNameAndGroup(phcReviewFormEntry.getFormType(), "MEETINGLEVEL");
-
-        if (phcReviewFormActivity != null) {
-            IncentiveActivityRecord record = recordRepo
-                    .findRecordByActivityIdCreatedDateBenId(phcReviewFormActivity.getId(), Timestamp.valueOf(phcReviewFormEntry.getPhcReviewDate().toString()), null);
-            if (record == null) {
-                record = new IncentiveActivityRecord();
-                record.setActivityId(phcReviewFormActivity.getId());
-                record.setCreatedDate(Timestamp.valueOf(phcReviewFormEntry.getPhcReviewDate().toString()));
-                record.setCreatedBy(phcReviewFormEntry.getCreatedBy());
-                record.setStartDate(Timestamp.valueOf(phcReviewFormEntry.getPhcReviewDate().toString()));
-                record.setEndDate(Timestamp.valueOf(phcReviewFormEntry.getPhcReviewDate().toString()));
-                record.setUpdatedDate(Timestamp.valueOf(phcReviewFormEntry.getPhcReviewDate().toString()));
-                record.setUpdatedBy(phcReviewFormEntry.getCreatedBy());
-                record.setAshaId(Math.toIntExact(phcReviewFormEntry.getUserId()));
-                record.setName(phcReviewFormActivity.getName());
-                record.setAmount(Long.valueOf(phcReviewFormActivity.getRate()));
-                recordRepo.save(record);
-            }
-        }
-    }
-
-    private void checkAndAddIncentivesForDeworming(DewormingForm dewormingFormEntry) {
-        IncentiveActivity dewormingFormActivity = incentivesRepo.findIncentiveMasterByNameAndGroup(dewormingFormEntry.getFormType(), "VILLAGELEVEL");
-
-        if (dewormingFormActivity != null) {
-            IncentiveActivityRecord record = recordRepo
-                    .findRecordByActivityIdCreatedDateBenId(dewormingFormActivity.getId(), Timestamp.valueOf(dewormingFormEntry.getDewormingDate().toString()), null);
-            if (record == null) {
-                record = new IncentiveActivityRecord();
-                record.setActivityId(dewormingFormActivity.getId());
-                record.setCreatedDate(Timestamp.valueOf(dewormingFormEntry.getDewormingDate().toString()));
-                record.setCreatedBy(dewormingFormEntry.getCreatedBy());
-                record.setStartDate(Timestamp.valueOf(dewormingFormEntry.getDewormingDate().toString()));
-                record.setEndDate(Timestamp.valueOf(dewormingFormEntry.getDewormingDate().toString()));
-                record.setUpdatedDate(Timestamp.valueOf(dewormingFormEntry.getDewormingDate().toString()));
-                record.setUpdatedBy(dewormingFormEntry.getCreatedBy());
-                record.setAshaId(Math.toIntExact(dewormingFormEntry.getUserId()));
-                record.setName(dewormingFormActivity.getName());
-                record.setAmount(Long.valueOf(dewormingFormActivity.getRate()));
-                recordRepo.save(record);
-            }
-        }
-    }
-
-    private void checkAndAddIncentivesForAhd(AHDForm ahdFormEntry) {
-        IncentiveActivity ahdFormActivity = incentivesRepo.findIncentiveMasterByNameAndGroup(ahdFormEntry.getFormType(), "MEETINGLEVEL");
-
-        if (ahdFormActivity != null) {
-            IncentiveActivityRecord record = recordRepo
-                    .findRecordByActivityIdCreatedDateBenId(ahdFormActivity.getId(), Timestamp.valueOf(ahdFormEntry.getAhdDate().toString()), null);
-            if (record == null) {
-                record = new IncentiveActivityRecord();
-                record.setActivityId(ahdFormActivity.getId());
-                record.setCreatedDate(Timestamp.valueOf(ahdFormEntry.getAhdDate().toString()));
-                record.setCreatedBy(ahdFormEntry.getCreatedBy());
-                record.setStartDate(Timestamp.valueOf(ahdFormEntry.getAhdDate().toString()));
-                record.setEndDate(Timestamp.valueOf(ahdFormEntry.getAhdDate().toString()));
-                record.setUpdatedDate(Timestamp.valueOf(ahdFormEntry.getAhdDate().toString()));
-                record.setUpdatedBy(ahdFormEntry.getCreatedBy());
-                record.setAshaId(Math.toIntExact(ahdFormEntry.getUserId()));
-                record.setName(ahdFormActivity.getName());
-                record.setAmount(Long.valueOf(ahdFormActivity.getRate()));
-                recordRepo.save(record);
-            }
-        }
-    }
 
 }

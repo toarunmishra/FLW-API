@@ -36,7 +36,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "i_ben_flow_outreach")
+@Table(name = "i_ben_flow_outreach",schema = "db_iemr")
 public class GeneralOpdData {
 
 	@Id

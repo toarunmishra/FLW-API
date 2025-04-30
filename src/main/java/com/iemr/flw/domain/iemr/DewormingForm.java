@@ -2,6 +2,9 @@ package com.iemr.flw.domain.iemr;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.sql.Timestamp;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -38,8 +41,9 @@ public class DewormingForm {
     @Column(name = "created_by")
     private String createdBy;
 
-    @Column(name = "created_date")
-    private String createdDate;
+    @CreationTimestamp
+    @Column(name = "created_date", updatable = false)
+    private Timestamp createdDate;
 
     @Column(name = "form_type")
     private String formType;
