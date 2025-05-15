@@ -11,4 +11,5 @@ public class DewormingFormDTO {
     private Integer ageGroup;
     private String image1;
     private String image2;
+    private String regDate;
 }

@@ -148,9 +148,7 @@ public class MaternalHealthServiceImpl implements MaternalHealthService {
 
             if (ancList != null) {
                 for (ANCVisitDTO anc : ancList) {
-                    if (anc.getAncDate() != null &&
-                            anc.getAncDate().toLocalDateTime().toLocalDate().isEqual(LocalDate.now().plusDays(1))) {
-
+                    if (anc.getAncDate() != null && anc.getAncDate().toLocalDateTime().toLocalDate().isEqual(LocalDate.now().plusDays(1))) {
                         String ancType = anc.getAbortionType(); // ANC1, ANC2, etc.
                         String body = "Reminder: Scheduled ANC check-up (" + ancType + ") is due tomorrow.";
                         String redirectPath = "/work-plan/anc/" + ancType.toLowerCase();

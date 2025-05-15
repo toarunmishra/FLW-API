@@ -65,9 +65,7 @@ public class AshaProfileImpl implements AshaProfileService {
             ashaWorker.setEmployeeId(m_user.getUserID());
             ashaWorker.setDob(m_user.getDOB());
             ashaWorker.setDateOfJoining(m_user.getDOJ());
-            ashaWorker.setName(String.format("%s %s",
-                    Objects.toString(m_user.getFirstName(), ""),
-                    Objects.toString(m_user.getLastName(), "")).trim());
+            ashaWorker.setName(String.format("%s %s", Objects.toString(m_user.getFirstName(), ""), Objects.toString(m_user.getLastName(), "")).trim());
             ashaWorker.setMobileNumber(m_user.getContactNo());
             ashaWorker.setAlternateMobileNumber(m_user.getEmergencyContactNo());
             ashaWorker.setProviderServiceMapID(m_user.getServiceProviderID());

@@ -26,8 +26,6 @@ public class GeneralOPDController {
     private GeneralOpdService generalOpdService;
 
 
-
-
     @RequestMapping(value = "/getData", method = RequestMethod.POST)
     @Operation(summary = "get beneficiary data for given user ")
     public ResponseEntity<Map<String, Object>> getBeneficiaryDataByAsha(@RequestBody GetBenRequestHandler requestDTO,
@@ -37,14 +35,13 @@ public class GeneralOPDController {
             Map<String, Object> data = new HashMap<>();
             data.put("userId", requestDTO.getUserId());
             data.put("entries", generalOpdService.getOpdListForAsha(requestDTO, authorization));
-
             response.put("data", data);
             response.put("statusCode", 200);
             response.put("errorMessage", "Success");
             response.put("status", "Success");
         } catch (Exception e) {
             logger.error("Error in get data : " + e);
-            response.put("status",500);
+            response.put("status", 500);
             response.put("message", "Error in get data : " + e);
         }
         return ResponseEntity.ok(response);

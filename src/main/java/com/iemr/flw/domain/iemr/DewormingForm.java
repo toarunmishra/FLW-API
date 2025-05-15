@@ -47,4 +47,7 @@ public class DewormingForm {
 
     @Column(name = "form_type")
     private String formType;
+
+    @Column(name = "registration_date")
+    private String regDate;
 }

@@ -155,6 +155,7 @@ public class VhndFormServiceImpl implements VhndFormService {
         dewormingForm.setDewormingDate(dto.getDewormingDate());
         dewormingForm.setDewormingLocation(dto.getDewormingLocation());
         dewormingForm.setAgeGroup(dto.getAgeGroup());
+        dewormingForm.setRegDate(dto.getRegDate());
         dewormingForm.setImage1(dto.getImage1());
         dewormingForm.setImage2(dto.getImage2());
         dewormingForm.setFormType("Deworming");

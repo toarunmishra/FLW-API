@@ -25,22 +25,29 @@ public class AdolescentHealthController {
     @Autowired
     private AdolescentHealthService adolescentHealthService;
 
-    @RequestMapping(value = "/savAll", method = RequestMethod.POST, headers = "Authorization")
+    @RequestMapping(value = "saveAll", method = RequestMethod.POST, headers = "Authorization")
     public ResponseEntity<Map<String,Object>>  saveAdolescentHealth(@RequestBody AdolescentHealthDTO adolescentHealthDTO) {
         Map<String,Object> response = new HashMap<>();
 
         try {
             if (adolescentHealthDTO.getAdolescentHealths().size() != 0) {
-                String result = adolescentHealthService.saveAll(adolescentHealthDTO);
-                if (result != null) {
-                    response.put("statusCode",200);
-                    response.put("message",result);
+                if(adolescentHealthDTO.getUserId()!=0){
+                    String result = adolescentHealthService.saveAll(adolescentHealthDTO);
+                    if (result != null) {
 
+                        response.put("statusCode",200);
+                        response.put("message",result);
+
+                    }
+                }else {
+                    response.put("statusCode",201);
+                    response.put("message","Invalid/NULL request obj");
                 }
+
 
             } else
                 response.put("statusCode",500);
-            response.put("error","Invalid/NULL request obj");
+                response.put("error","Invalid/NULL request obj");
         } catch (Exception e) {
             logger.error("Error in get data : " + e);
             response.put("statusCode",500);
@@ -50,7 +57,7 @@ public class AdolescentHealthController {
 
     }
 
-    @RequestMapping(value = "/getAll",method = RequestMethod.POST, headers = "Authorization")
+    @RequestMapping(value = "getAll",method = RequestMethod.POST, headers = "Authorization")
     public ResponseEntity<Map<String,Object>> getAllAdolescentHealth(@RequestBody GetBenRequestHandler getBenRequestHandler) {
         Map<String,Object> response = new HashMap<>();
         try {

@@ -20,4 +20,9 @@ public class UserServiceImpl implements UserService {
         UserServiceRoleDTO userRole = userServiceRoleRepo.getUserRole(userId).get(0);
         return userRole;
     }
+
+    @Override
+    public Object getAllUser(Integer villageId) {
+        return userServiceRoleRepo.findAll().stream().filter(userServiceRole -> userServiceRole.getVillageid().equals(villageId));
+    }
 }
