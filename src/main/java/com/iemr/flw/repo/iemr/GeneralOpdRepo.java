@@ -12,5 +12,6 @@ public interface GeneralOpdRepo extends JpaRepository<GeneralOpdData,Long> {
 //    SELECT * FROM db_iemr.i_ben_flow_outreach;
 //    SELECT * FROM db_iemr.t_benvisitdetail;
 //    SELECT * FROM db_iemr.t_benreferdetails;
+
     Page<GeneralOpdData> findAll(Pageable pageable);
 }

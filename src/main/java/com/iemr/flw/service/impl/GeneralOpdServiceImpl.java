@@ -41,7 +41,7 @@ public class GeneralOpdServiceImpl implements GeneralOpdService {
             filteredList = generalOpdRepo.findAll(pageable).stream()
                     .filter(generalOpdData ->
                             generalOpdData.getVisitCategory() != null &&
-                                    generalOpdData.getVisitCategory().equals("General OPD"))
+                                    generalOpdData.getVisitCategory().equals("General OPD") && generalOpdData.getVillageID().equals(request.getVillageID()))
                     .collect(Collectors.toList());
 
             pageNo++;
