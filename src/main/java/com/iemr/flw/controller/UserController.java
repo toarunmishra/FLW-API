@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/user", headers = "Authorization")
+@RequestMapping(value = "/user")
 public class UserController {
 
     private final Logger logger = LoggerFactory.getLogger(CoupleController.class);
@@ -42,8 +42,7 @@ public class UserController {
     }
 
     @RequestMapping(value ="getAllUser", method = {RequestMethod.GET})
-    public ResponseEntity<?> getAllUserByVillageName(@RequestParam(value = "villageId") Integer villageId,
-                                           @RequestHeader(value = "Authorization") String Authorization) {
+    public ResponseEntity<?> getAllUserByVillageName(@RequestParam(value = "villageId") Integer villageId) {
         try {
             Object result = userService.getAllUser(villageId);
             return new ResponseEntity<>(

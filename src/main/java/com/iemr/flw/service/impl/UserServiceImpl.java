@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -23,6 +25,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Object getAllUser(Integer villageId) {
-        return userServiceRoleRepo.findAll().stream().filter(userServiceRole -> userServiceRole.getVillageid().equals(villageId));
+        return userServiceRoleRepo.findAll().stream()
+                .filter(userServiceRole -> {
+                    String villageIdsStr = userServiceRole.getVillageid(); // e.g., "1,2,3"
+                    if (villageIdsStr == null || villageIdsStr.isEmpty()) {
+                        return false;
+                    }
+                    return Arrays.asList(villageIdsStr.split(","))
+                            .contains(String.valueOf(villageId));
+                });
     }
 }

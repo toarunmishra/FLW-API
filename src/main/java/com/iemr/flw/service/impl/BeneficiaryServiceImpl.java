@@ -66,6 +66,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
         try {
             if (request != null && request.getAshaId() != null) {
+                logger.info("Data:1");
                 List<RMNCHMBeneficiaryaddress> resultSet;
                 Integer pageSize = Integer.valueOf(door_to_door_page_size);
                 if (request.getPageNo() != null) {
@@ -97,6 +98,8 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
             } else
                 throw new Exception("Invalid/missing village details");
         } catch (Exception e) {
+
+            logger.info("Exception for get ben data:"+e.getMessage());
             throw new Exception(e.getMessage());
         }
 

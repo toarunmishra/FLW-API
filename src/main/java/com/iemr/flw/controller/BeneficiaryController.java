@@ -33,14 +33,14 @@ public class BeneficiaryController {
                 String s = beneficiaryService.getBenData(requestDTO, authorization);
                 if (s != null)
                     response.setResponse(s);
-                else
+                else {
                     logger.error("No record found");
-
-                response.setError(5000, "No record found");
-            } else
+                    response.setError(5000, "No record found");
+                }
+            } else {
                 logger.error("Invalid/NULL request obj");
-
-            response.setError(5000, "Invalid/NULL request obj");
+                response.setError(5000, "Invalid/NULL request obj");
+            }
         } catch (Exception e) {
             logger.error("Error in get data : " + e.getMessage());
             response.setError(5000, "Error in get data : " + e.getMessage());
