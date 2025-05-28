@@ -259,7 +259,7 @@
 
 
     <build>
-        <finalName>${artifactId}-${version}</finalName>
+        <finalName>${artifactId}</finalName>
         <plugins>
 			
             <plugin>
