@@ -3,7 +3,11 @@ package com.iemr.flw.service.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import com.google.gson.Gson;
 import com.iemr.flw.dto.iemr.SmsRequestOBJ;
+import com.iemr.flw.repo.iemr.AncCareRepo;
+import com.iemr.flw.repo.iemr.SmsTemplateRepo;
 import com.iemr.flw.service.SMSGatewayService;
 import com.iemr.flw.utils.CookieUtil;
 import org.slf4j.Logger;
@@ -37,6 +41,11 @@ public class SMSGatewayServiceImpl implements SMSGatewayService {
 	@Autowired
 	CookieUtil cookieUtil;
 
+	@Autowired
+	private  AncCareRepo ancCareRepo;
+
+	@Autowired
+	private SmsTemplateRepo smsTemplateRepo;
 	private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	@Override
@@ -78,13 +87,33 @@ public class SMSGatewayServiceImpl implements SMSGatewayService {
 
 		switch (smsType) {
 			case "ANC":
-			//	smsTypeID = tCRequestModelRepo.getSMSTypeID(schedule);
+				smsTypeID = smsTemplateRepo.getSMSTypeID("Registration SMS");
 				break;
-
 			default:
 				smsTypeID = 0;
 		}
-		return  "";
+
+		if (smsTypeID != 0) {
+			obj = new SmsRequestOBJ();
+			ArrayList<Integer> smsTemplateID = smsTemplateRepo.getSMSTemplateID(smsTypeID);
+			if (smsTemplateID != null && smsTemplateID.size() == 1)
+				obj.setSmsTemplateID(smsTemplateID.get(0));
+			else {
+				obj.setSmsTemplateID(null);
+				logger.info("Multiple SMS template created for same sms type");
+			}
+			obj.setBeneficiaryRegID(benRegID);
+			obj.setSmsTypeTM(smsType);
+			obj.setCreatedBy(createdBy);
+			obj.setTcDate(tcDate);
+			obj.setTcPreviousDate(tcPreviousDate);
+
+			objList.add(obj);
+		}
+		if (obj != null && obj.getSmsTemplateID() != null)
+			return new Gson().toJson(objList);
+		else
+			return null;
 
 
 
@@ -104,4 +133,6 @@ public class SMSGatewayServiceImpl implements SMSGatewayService {
 
 		return restTemplate.exchange(sendSMSUrl, HttpMethod.POST, requestOBJ, String.class).getBody();
 	}
+
+
 }

@@ -58,6 +58,9 @@ public class MaternalHealthServiceImpl implements MaternalHealthService {
     @Autowired
     private IncentiveRecordRepo recordRepo;
 
+    @Autowired
+     private  SMSGatewayServiceImpl smsGatewayService;
+
 
     ObjectMapper mapper = new ObjectMapper();
 
@@ -87,6 +90,10 @@ public class MaternalHealthServiceImpl implements MaternalHealthService {
                 pwrList.add(pwr);
             });
             pregnantWomanRegisterRepo.saveAll(pwrList);
+            for(PregnantWomanDTO pregnantWomanDTO :pregnantWomanDTOs){
+                smsGatewayService.smsSenderGateway("ANC",pregnantWomanDTO.getBenId(),pregnantWomanDTO.getCreatedBy(),pregnantWomanDTO.getRegistrationDate().toString(),"","");
+
+            }
 
             logger.info(pwrList.size() + " Pregnant Woman details saved");
             return "no of pwr details saved: " + pwrList.size();
