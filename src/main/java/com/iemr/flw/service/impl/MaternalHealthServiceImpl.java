@@ -363,6 +363,15 @@ public class MaternalHealthServiceImpl implements MaternalHealthService {
         IncentiveActivity ancFullActivity =
                 incentivesRepo.findIncentiveMasterByNameAndGroup("ANC-FULL", "MATERNAL HEALTH");
 
+        IncentiveActivity ancAbortion =
+                incentivesRepo.findIncentiveMasterByNameAndGroup("ANC-ABORTION", "MATERNAL HEALTH");
+
+        IncentiveActivity distributionOfMisoprostol =
+                incentivesRepo.findIncentiveMasterByNameAndGroup("DISTRIBUTION-MISOPROSTOL", "MATERNAL HEALTH");
+
+        IncentiveActivity indentifiedHRP =
+                incentivesRepo.findIncentiveMasterByNameAndGroup("IDENTIFIED-HRP", "MATERNAL HEALTH");
+
         if (anc1Activity != null) {
             ancList.forEach( ancVisit -> {
                 Integer userId = userRepo.getUserIdByName(ancVisit.getCreatedBy());
@@ -412,8 +421,29 @@ public class MaternalHealthServiceImpl implements MaternalHealthService {
                         recordRepo.save(record);
                     }
                 }
+                if(ancVisit.getIsHrpConfirmed()){
+                    IncentiveActivityRecord record = recordRepo.findRecordByActivityIdCreatedDateBenId(indentifiedHRP.getId(), ancVisit.getCreatedDate(), ancVisit.getBenId());
+
+                    if(record==null){
+                        record = new IncentiveActivityRecord();
+
+                        record.setActivityId(indentifiedHRP.getId());
+                        record.setCreatedDate(ancVisit.getCreatedDate());
+                        record.setCreatedBy(ancVisit.getCreatedBy());
+                        record.setUpdatedDate(ancVisit.getCreatedDate());
+                        record.setUpdatedBy(ancVisit.getCreatedBy());
+                        record.setStartDate(ancVisit.getCreatedDate());
+                        record.setEndDate(ancVisit.getCreatedDate());
+                        record.setBenId(ancVisit.getBenId());
+                        record.setAshaId(userId);
+                        record.setAmount(Long.valueOf(indentifiedHRP.getRate()));
+                        recordRepo.save(record);
+                    }
+
+                }
             });
         }
+
     }
 
 }

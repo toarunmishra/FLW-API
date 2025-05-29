@@ -66,7 +66,6 @@ public class BeneficiaryServiceImpl implements BeneficiaryService {
 
         try {
             if (request != null && request.getAshaId() != null) {
-                logger.info("Data:1");
                 List<RMNCHMBeneficiaryaddress> resultSet;
                 Integer pageSize = Integer.valueOf(door_to_door_page_size);
                 if (request.getPageNo() != null) {
