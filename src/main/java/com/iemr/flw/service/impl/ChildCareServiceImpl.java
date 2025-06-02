@@ -244,6 +244,7 @@ public class ChildCareServiceImpl implements ChildCareService {
             hbncVisitCardRepo.saveAll(hbncCardList);
             hbncPart1Repo.saveAll(hbncPart1List);
             hbncPart2repo.saveAll(hbncPart2List);
+            checkAndAddIncentivesForHBnc(hbncList);
             logger.info("HBNC details saved");
             return "no of hbnc details saved: " + (hbncList.size() + hbncCardList.size() +
                     hbncPart1List.size() + hbncPart2List.size());
@@ -406,5 +407,57 @@ public class ChildCareServiceImpl implements ChildCareService {
 
     private Integer getImmunizationServiceIdForVaccine(Short vaccineId) {
         return vaccineRepo.getImmunizationServiceIdByVaccineId(vaccineId);
+    }
+    private void checkAndAddIncentivesForHBnc(List<HbncVisit> hbncVisits) {
+        hbncVisits.forEach(hbncVisitdata -> {
+            IncentiveActivity providingHbncActivity =
+                    incentivesRepo.findIncentiveMasterByNameAndGroup("PROVIDING-HBNC", "CHILDHEALTH");
+
+            IncentiveActivity LBWFollUpActivity =
+                    incentivesRepo.findIncentiveMasterByNameAndGroup("FOLLOWUP-BABIES", "CHILDHEALTH");
+            if(hbncVisitdata.getVisitNo()==42){
+                createIncentiveRecordForHBnc(hbncVisitdata,hbncVisitdata.getBenId(),0, providingHbncActivity);
+            }
+            if (hbncVisitdata.getBabyWeight() != null && hbncVisitdata.getBabyWeight() < 2.5) {
+                createIncentiveRecordForHBnc(hbncVisitdata,hbncVisitdata.getBenId(),0, LBWFollUpActivity);
+            }
+
+            if (Boolean.TRUE.equals(hbncVisitdata.getAllLimbsLimp()) ||
+                    Boolean.TRUE.equals(hbncVisitdata.getCryWeakStopped()) ||
+                    Boolean.TRUE.equals(hbncVisitdata.getFeedingLessStopped()) ||
+                    Boolean.TRUE.equals(hbncVisitdata.getBreathFast()) ||
+                    Boolean.TRUE.equals(hbncVisitdata.getChestDrawing()) ||
+                    Boolean.TRUE.equals(hbncVisitdata.getBloatedStomach()) ||
+                    Boolean.TRUE.equals(hbncVisitdata.getColdOnTouch())) {
+                if (hbncVisitdata.getBabyReferred() != null && hbncVisitdata.getBabyReferred()) {
+                    createIncentiveRecordForHBnc(hbncVisitdata,hbncVisitdata.getBenId(),0, LBWFollUpActivity);
+                }
+
+
+            }
+
+
+        });
+
+
+    }
+    private void createIncentiveRecordForHBnc(HbncVisit hbncVisit, Long benId, Integer userId, IncentiveActivity providingHbncActivity) {
+        IncentiveActivityRecord record = recordRepo
+                .findRecordByActivityIdCreatedDateBenId(providingHbncActivity.getId(), hbncVisit.getCreatedDate(), benId);
+        if (record == null) {
+            record = new IncentiveActivityRecord();
+            record.setActivityId(providingHbncActivity.getId());
+            record.setCreatedDate(hbncVisit.getCreatedDate());
+            record.setCreatedBy(hbncVisit.getCreatedBy());
+            record.setName(providingHbncActivity.getName());
+            record.setStartDate(hbncVisit.getCreatedDate());
+            record.setEndDate(hbncVisit.getCreatedDate());
+            record.setUpdatedDate(hbncVisit.getCreatedDate());
+            record.setUpdatedBy(hbncVisit.getCreatedBy());
+            record.setBenId(benId);
+            record.setAshaId(userId);
+            record.setAmount(Long.valueOf(providingHbncActivity.getRate()));
+            recordRepo.save(record);
+        }
     }
 }

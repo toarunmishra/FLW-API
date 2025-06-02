@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,10 +26,10 @@ public class CoupleServiceImpl implements CoupleService {
 
     ObjectMapper mapper = new ObjectMapper();
     ModelMapper modelMapper = new ModelMapper();
-    
+
     @Autowired
     private EligibleCoupleRegisterRepo eligibleCoupleRegisterRepo;
-    
+
     @Autowired
     private EligibleCoupleTrackingRepo eligibleCoupleTrackingRepo;
 
@@ -40,7 +41,7 @@ public class CoupleServiceImpl implements CoupleService {
 
     @Autowired
     private IncentiveRecordRepo recordRepo;
-    
+
     @Autowired
     private BeneficiaryRepo beneficiaryRepo;
 
@@ -57,7 +58,7 @@ public class CoupleServiceImpl implements CoupleService {
                         eligibleCoupleRegisterRepo.findEligibleCoupleRegisterByBenId(it.getBenId());
 
                 if (existingECR != null && null != existingECR.getNumLiveChildren()) {
-                    if(existingECR.getNumLiveChildren() == 0 && it.getNumLiveChildren() >= 1 && it.getMarriageFirstChildGap() >= 3) {
+                    if (existingECR.getNumLiveChildren() == 0 && it.getNumLiveChildren() >= 1 && it.getMarriageFirstChildGap() >= 3) {
                         IncentiveActivity activity1 =
                                 incentivesRepo.findIncentiveMasterByNameAndGroup("MARRIAGE_1st_CHILD_GAP", "FAMILY PLANNING");
                         createIncentiveRecord(recordList, it, activity1);
@@ -65,6 +66,11 @@ public class CoupleServiceImpl implements CoupleService {
                         IncentiveActivity activity2 =
                                 incentivesRepo.findIncentiveMasterByNameAndGroup("1st_2nd_CHILD_GAP", "FAMILY PLANNING");
                         createIncentiveRecord(recordList, it, activity2);
+                    } else if (Objects.equals(existingECR.getHomeDelivery(), "yes")) {
+                        IncentiveActivity activity3 =
+                                incentivesRepo.findIncentiveMasterByNameAndGroup("HOME_DELIVERY", "FAMILY PLANNING");
+                        createIncentiveRecord(recordList, it, activity3);
+
                     }
                     Long id = existingECR.getId();
                     modelMapper.map(it, existingECR);
@@ -140,11 +146,11 @@ public class CoupleServiceImpl implements CoupleService {
         Integer userId = userRepo.getUserIdByName(ect.getCreatedBy());
         List<EligibleCoupleTracking> couplesHadAntara = eligibleCoupleTrackingRepo.findCouplesHadAntara(ect.getBenId());
         Integer numAntaraDosage = 0;
-        if(couplesHadAntara != null && couplesHadAntara.size() > 0) {
+        if (couplesHadAntara != null && couplesHadAntara.size() > 0) {
             numAntaraDosage = couplesHadAntara.size();
         }
 
-        if(ect.getMethodOfContraception() != null && ect.getMethodOfContraception().equals("ANTRA Injection")) {
+        if (ect.getMethodOfContraception() != null && ect.getMethodOfContraception().equals("ANTRA Injection")) {
             if (numAntaraDosage == 0) {
                 IncentiveActivity antaraActivity =
                         incentivesRepo.findIncentiveMasterByNameAndGroup("ANTARA_PROG_1", "FAMILY PLANNING");
