@@ -1,27 +1,29 @@
 package com.iemr.flw.utils;
 
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
+
+import java.util.function.Function;
+import javax.crypto.SecretKey;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
-import java.util.Date;
-import java.util.UUID;
-import java.util.function.Function;
+import com.iemr.flw.utils.exception.IEMRException;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtil {
 
 	@Value("${jwt.secret}")
 	private String SECRET_KEY;
+	
+	@Autowired
+	private TokenDenylist tokenDenylist;
 
-	@Value("${jwt.access.expiration}")
-	private long ACCESS_EXPIRATION_TIME;
-
-	@Value("${jwt.refresh.expiration}")
-	private long REFRESH_EXPIRATION_TIME;
-
+	// Generate a key using the secret
 	private SecretKey getSigningKey() {
 		if (SECRET_KEY == null || SECRET_KEY.isEmpty()) {
 			throw new IllegalStateException("JWT secret key is not set in application.properties");
@@ -29,70 +31,60 @@ public class JwtUtil {
 		return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 	}
 
-	public String generateToken(String username, String userId) {
-		return buildToken(username, userId, "access", ACCESS_EXPIRATION_TIME);
-	}
-
-	public String generateRefreshToken(String username, String userId) {
-		return buildToken(username, userId, "refresh", REFRESH_EXPIRATION_TIME);
-	}
-
-	private String buildToken(String username, String userId, String tokenType, long expiration) {
-		return Jwts.builder()
-				.subject(username)
-				.claim("userId", userId)
-				.claim("token_type", tokenType)
-				.id(UUID.randomUUID().toString())
-				.issuedAt(new Date())
-				.expiration(new Date(System.currentTimeMillis() + expiration))
-				.signWith(getSigningKey())
-				.compact();
-	}
-
+	// Validate and parse JWT Token
 	public Claims validateToken(String token) {
 		try {
-			return Jwts.parser()
-                    .verifyWith(getSigningKey())
-                    .build()
-                    .parseSignedClaims(token)
-					.getPayload();
-
-		} catch (ExpiredJwtException ex) {
-			// Handle expired token specifically if needed
-		} catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException ex) {
-			// Log specific error types
-		}
-		return null;
-	}
-
-	public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
-		final Claims claims = getAllClaimsFromToken(token);
-		return claimsResolver.apply(claims);
-	}
-
-	public Claims getAllClaimsFromToken(String token) {
-		return Jwts.parser()
+			Claims claims = Jwts.parser()
 				.verifyWith(getSigningKey())
 				.build()
 				.parseSignedClaims(token)
 				.getPayload();
+				
+			String jti = claims.getId();
+			
+			// Check if token is denylisted (only if jti exists)
+			if (jti != null && tokenDenylist.isTokenDenylisted(jti)) {
+				return null;
+			}
+			
+			return claims;
+		} catch (Exception e) {
+			return null; // Handle token parsing/validation errors
+		}
 	}
 
-
-	public long getRefreshTokenExpiration() {
-		return REFRESH_EXPIRATION_TIME;
+	public String extractUsername(String token) {
+		return extractClaim(token, Claims::getSubject);
 	}
 
-	public String getUserIdFromToken(String token) {
-		return getAllClaimsFromToken(token).get("userId", String.class);
+	public Integer extractUserId(String jwtToken) throws IEMRException {
+		try {
+			// Validate JWT token and extract claims
+			Claims claims = validateToken(jwtToken);
+
+			if (claims == null) {
+				throw new IEMRException("Invalid JWT token.");
+			}
+
+			String userId = claims.get("userId", String.class);
+
+			return Integer.parseInt(userId);
+
+		} catch (Exception e) {
+			throw new IEMRException("Validation error: " + e.getMessage(), e);
+		}
+
 	}
 
-	// Additional helper methods
-	public String getJtiFromToken(String token) {
-		return getAllClaimsFromToken(token).getId();
+	public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+		final Claims claims = extractAllClaims(token);
+		return claims != null ? claimsResolver.apply(claims) : null;
 	}
 
-	public String getUsernameFromToken(String token) {
-		return getAllClaimsFromToken(token).getSubject();
-	}
+	private Claims extractAllClaims(String token) {
+		return Jwts.parser()
+				.verifyWith(getSigningKey())
+				.build()
+				.parseSignedClaims(token)
+				.getPayload();	}
 }
