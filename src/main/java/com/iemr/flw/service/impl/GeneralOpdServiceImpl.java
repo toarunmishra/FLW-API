@@ -38,7 +38,7 @@ public class GeneralOpdServiceImpl implements GeneralOpdService {
 
         do {
             Pageable pageable = PageRequest.of(pageNo, Integer.parseInt(door_to_door_page_size));
-            filteredList = generalOpdRepo.findAll(pageable).stream()
+            filteredList = generalOpdRepo.findAll().stream()
                     .filter(generalOpdData ->
                             generalOpdData.getVisitCategory() != null &&
                                     generalOpdData.getVisitCategory().equals("General OPD") && generalOpdData.getVisitCode()!=0)
@@ -48,6 +48,6 @@ public class GeneralOpdServiceImpl implements GeneralOpdService {
 
         } while (filteredList.isEmpty());
 
-        return filteredList;
+        return filteredList.stream().filter(data-> data.getAgentId().equals(request.getUserName())).collect(Collectors.toList());
     }
 }
