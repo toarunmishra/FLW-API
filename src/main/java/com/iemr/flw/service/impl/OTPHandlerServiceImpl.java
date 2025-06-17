@@ -38,8 +38,6 @@ public class OTPHandlerServiceImpl implements OTPHandler {
     @Value("${sendSMSUrl}")
     private String sendSMSUrl;
 
-    //    @Value("${sendOTPUrl}")
-//    private String OTP_SERVICE_URL;
     @Value("${airtel.api.url}")
     private String apiUrl;
 
@@ -147,10 +145,7 @@ public class OTPHandlerServiceImpl implements OTPHandler {
 //        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
 //
 //        return response.getBody();
-
-
     }
-
     public String saveBeneficiaryId(String phoneNumber, Integer otp) {
         Optional<OtpBeneficiary> otpEntry = otpBeneficiaryRepository.findByPhoneNumberAndOtp(phoneNumber, otp);
 
@@ -162,8 +157,6 @@ public class OTPHandlerServiceImpl implements OTPHandler {
             return "Invalid Beneficiary";
         }
     }
-
-
     /***
      * @param
      * @return success if OTP re-sent successfully
@@ -174,7 +167,6 @@ public class OTPHandlerServiceImpl implements OTPHandler {
         saveOtp(mobNo, otp);
 
         return  sendSms(mobNo,"OTP-123",String.valueOf(otp));
-
 //        restTemplate = new RestTemplate();
 //
 //        String url = OTP_SERVICE_URL + "/resendOTP";
@@ -192,7 +184,6 @@ public class OTPHandlerServiceImpl implements OTPHandler {
 //
 //        return response.getBody();
     }
-
     @Override
     public JSONObject saveBenficiary(OtpRequestDTO requestOBJ) {
         JSONObject jsonObject = new JSONObject();
@@ -202,7 +193,6 @@ public class OTPHandlerServiceImpl implements OTPHandler {
 
         return jsonObject;
     }
-
     @Override
     public String sendSMS(String request, String Authorization) {
 
@@ -214,7 +204,6 @@ public class OTPHandlerServiceImpl implements OTPHandler {
 
         return restTemplate.exchange(sendSMSUrl, HttpMethod.POST, requestOBJ, String.class).getBody();
     }
-
     private void saveOtp(String phoneNo, Integer otp) {
         OtpBeneficiary otpEntry = new OtpBeneficiary();
         otpEntry.setPhoneNumber(phoneNo);
@@ -224,11 +213,9 @@ public class OTPHandlerServiceImpl implements OTPHandler {
         otpBeneficiaryRepository.save(otpEntry);
 
     }
-
     // generate 6 digit random no #
     public int generateOTP(String authKey) throws Exception {
         String generatedPassword = null;
-
 //		Random random = new Random();
         Random random = SecureRandom.getInstanceStrong();
         int otp = 100000 + random.nextInt(900000);
@@ -243,7 +230,6 @@ public class OTPHandlerServiceImpl implements OTPHandler {
         }
         return otp;
     }
-
     // SHA-256 encoding logic implemented
     private String getEncryptedOTP(int otp) throws Exception {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -252,13 +238,9 @@ public class OTPHandlerServiceImpl implements OTPHandler {
         for (int i = 0; i < bytes.length; i++) {
             sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
         }
-
         return sb.toString();
     }
-
     // send SMS to user
-
-
     public String sendSms(String phoneNumber, String applicationId,String opt) {
 //        HttpServletRequest requestHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
 //                .getRequest();
@@ -266,12 +248,9 @@ public class OTPHandlerServiceImpl implements OTPHandler {
 //        logger.info("Token:"+jwtTokenFromCookie);
 //        String userName = jwtUtil.getUsernameFromToken(jwtTokenFromCookie);
 //        logger.info("UserName:"+userName);
-
-
         try {
             String message = "Dear Citizen, your OTP for login is " +opt+". Use it within 15 minutes. Do not share this code. Regards PSMRIAM.";
 //            String message = "Hello! Your OTP for providing consent for registration on AMRIT is {#OTP#}. This OTP is valid for 10 minutes. Kindly share it only with {#User Name, Designation#} to complete the process. PSMRI";
-
             // Build payload
             Map<String, Object> payload = new HashMap<>();
             payload.put("customerId", customerId);
