@@ -53,6 +53,10 @@ public class HbncPart2 {
     @Column(name = "cry_weak_stop")
     private Boolean cryWeakStop;
 
+    @Column(name = "routine_newborn_care_performed")
+    private Boolean routineNewbornCarePerformed;
+
+
     @Column(name = "dry_baby")
     private Boolean dryBaby;
 

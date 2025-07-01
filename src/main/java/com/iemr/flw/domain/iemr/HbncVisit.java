@@ -4,6 +4,7 @@ import lombok.Data;
 
 import jakarta.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Table(name = "t_hbnc_visit", schema = "db_iemr")
@@ -130,6 +131,41 @@ public class HbncVisit {
 
     @Column(name = "supervisor_sign_date")
     private Timestamp supervisorSignDate;
+
+    @Column(name = "baby_urine_less_6_times")
+    private Boolean babyUrineLess6Times;
+
+    @Column(name = "cracked_nipples_or_breast_engorged")
+    private Boolean crackedNipplesOrBreastEngorged;
+
+    @Column(name = "yellow_eyes_palm_sole_skin")
+    private Boolean yellowEyesPalmSoleSkin;
+
+    @ElementCollection
+    @CollectionTable(name = "baby_immunization_status", joinColumns = @JoinColumn(name = "checkup_id"))
+    @Column(name = "immunization_status")
+    private List<String> babyImmunizationStatusList;
+
+    @Column(name = "ash_hands_washed")
+    private Boolean ashHandsWashed;
+
+    @Column(name = "baby_distended_abdomen")
+    private Boolean babyDistendedAbdomen;
+
+    @Column(name = "baby_cold_or_fever")
+    private Boolean babyColdOrFever;
+
+    @Column(name = "baby_breath_rate_fast")
+    private Boolean babyBreathRateFast;
+
+    @Column(name = "baby_pus_umbilicus")
+    private Boolean babyPusUmbilicus;
+
+    @Column(name = "mother_referral_reason", columnDefinition = "TEXT")
+    private String motherReferralReason;
+
+    @Column(name = "baby_referral_reason", columnDefinition = "TEXT")
+    private String babyReferralReason;
 
     @Column(name = "created_by")
     private String createdBy;

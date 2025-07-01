@@ -21,6 +21,7 @@ public class HbncPart2DTO {
     private Boolean allLimbsLimp;
     private Boolean feedLessStop;
     private Boolean cryWeakStop;
+    private Boolean routineNewbornCarePerformed;
     private Boolean dryBaby;
     private Boolean wrapClothCloseToMother;
     private Boolean exclusiveBreastFeeding;
@@ -31,4 +32,6 @@ public class HbncPart2DTO {
     private Timestamp createdDate;
     private Timestamp updatedDate;
     private String updatedBy;
+
+
 }

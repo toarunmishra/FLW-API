@@ -68,6 +68,9 @@ public class HbncVisitCard {
     @Column(name = "birth_registration")
     private Boolean registrationOfBirth;
 
+    @Column(name = "baby_discharged_from_sncu")
+    private Boolean babyDischargedFromSncu;
+
     @Column(name = "created_by")
     private String createdBy;
 

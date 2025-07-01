@@ -30,4 +30,6 @@ public class HbncVisitCardDTO {
     private Timestamp createdDate;
     private Timestamp updatedDate;
     private String updatedBy;
+    private Boolean babyDischargedFromSncu;
+    private Double birthWeightInKg;
 }

@@ -3,6 +3,7 @@ package com.iemr.flw.dto.iemr;
 import lombok.Data;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Data
 public class HbncVisitDTO {
@@ -47,6 +48,17 @@ public class HbncVisitDTO {
     private String supervisorName;
     private String supervisorComment;
     private Timestamp supervisorSignDate;
+    private Boolean babyUrineLess6Times;
+    private Boolean crackedNipplesOrBreastEngorged;
+    private Boolean yellowEyesPalmSoleSkin;
+    private List<String> babyImmunizationStatusList;
+    private Boolean ashHandsWashed;
+    private Boolean babyDistendedAbdomen;
+    private Boolean babyColdOrFever;
+    private Boolean babyBreathRateFast;
+    private Boolean babyPusUmbilicus;
+    private String motherReferralReason;
+    private String babyReferralReason;
     private String createdBy;
     private Timestamp createdDate;
     private Timestamp updatedDate;
