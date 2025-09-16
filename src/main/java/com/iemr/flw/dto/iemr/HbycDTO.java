@@ -11,6 +11,8 @@ public class HbycDTO {
 
     private Long benId;
 
+    private Integer userId;
+
     private String subcenterName;
 
     private String primaryHealthCenterName;

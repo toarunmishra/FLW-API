@@ -1,6 +1,5 @@
 package com.iemr.flw.service.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iemr.flw.domain.iemr.*;
 import com.iemr.flw.dto.identity.GetBenRequestHandler;
@@ -8,6 +7,7 @@ import com.iemr.flw.dto.iemr.*;
 import com.iemr.flw.repo.identity.BeneficiaryRepo;
 import com.iemr.flw.repo.iemr.*;
 import com.iemr.flw.service.ChildCareService;
+import com.iemr.flw.utils.JwtAuthenticationUtil;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,6 +48,9 @@ public class ChildCareServiceImpl implements ChildCareService {
     @Autowired
     private VaccineRepo vaccineRepo;
 
+    @Autowired
+    private JwtAuthenticationUtil jwtAuthenticationUtil;
+
     ObjectMapper mapper = new ObjectMapper();
 
     ModelMapper modelMapper = new ModelMapper();
@@ -76,12 +75,26 @@ public class ChildCareServiceImpl implements ChildCareService {
                 hbycList.add(hbyc);
             });
             hbycRepo.saveAll(hbycList);
+            checkAndAddHbycIncentives(hbycList);
             return "no of hbyc details saved: " + hbycDTOs.size();
         } catch (Exception e) {
             logger.info("error while saving hbyc details: " + e.getMessage());
         }
         return null;
     }
+
+    private void checkAndAddHbycIncentives(List<HBYC> hbycList) {
+        IncentiveActivity visitActivity =
+                incentivesRepo.findIncentiveMasterByNameAndGroup("HBYC_QUARTERLY_VISITS", "CHILD HEALTH");
+        hbycList.forEach(hbyc -> {
+
+            createIncentiveRecordforHbycVisit(hbyc, hbyc.getBenId(), visitActivity);
+
+        });
+
+
+    }
+
 
     @Override
     public List<HbycDTO> getHbycRecords(GetBenRequestHandler dto) {
@@ -147,6 +160,7 @@ public class ChildCareServiceImpl implements ChildCareService {
         }
         return result;
     }
+
     private void addIfValid(Map<String, Object> map, String key, Object value) {
         if (value == null) return;
 
@@ -154,16 +168,17 @@ public class ChildCareServiceImpl implements ChildCareService {
 
         map.put(key, value);
     }
+
     private String convert(Boolean value) {
         if (value == null) return null;
         return value ? "Yes" : "No";
     }
+
     private String convert(Object value) {
         if (value == null) return null;
         if (value instanceof Boolean) return (Boolean) value ? "Yes" : "No";
         return value.toString();
     }
-
 
 
     private String convert(String value) {
@@ -326,14 +341,14 @@ public class ChildCareServiceImpl implements ChildCareService {
             Long benId = hbncVisit.getBeneficiaryId();
             if (isVisitDone) {
                 IncentiveActivity visitActivity =
-                        incentivesRepo.findIncentiveMasterByNameAndGroup("HBNC_VISIT", "HBNC");
+                        incentivesRepo.findIncentiveMasterByNameAndGroup("CH_HBNC_42DAYS", "CHILD HEALTH");
 
                 createIncentiveRecordforHbncVisit(hbncVisit, benId, visitActivity);
 
             }
             if (isBabyDisChargeSNCUA) {
                 IncentiveActivity babyDisChargeSNCUAActivity =
-                        incentivesRepo.findIncentiveMasterByNameAndGroup("BABY_DISCHARGES_SNCU", "HBNC");
+                        incentivesRepo.findIncentiveMasterByNameAndGroup("CH_SN_LBW_FOLLOWUP", "CHILD HEALTH");
 
                 createIncentiveRecordforHbncVisit(hbncVisit, benId, babyDisChargeSNCUAActivity);
 
@@ -410,6 +425,27 @@ public class ChildCareServiceImpl implements ChildCareService {
             record.setUpdatedBy(hbncVisit.getCreatedBy());
             record.setBenId(benId);
             record.setAshaId(hbncVisit.getUserId());
+            record.setAmount(Long.valueOf(immunizationActivity.getRate()));
+            recordRepo.save(record);
+        }
+    }
+
+
+    private void createIncentiveRecordforHbycVisit(HBYC hbyc, Long benId, IncentiveActivity immunizationActivity) {
+        IncentiveActivityRecord record = recordRepo
+                .findRecordByActivityIdCreatedDateBenId(immunizationActivity.getId(), hbyc.getCreatedDate(), benId);
+        if (record == null) {
+            record = new IncentiveActivityRecord();
+            record.setActivityId(immunizationActivity.getId());
+            record.setCreatedDate(hbyc.getVisitDate());
+            record.setCreatedBy(hbyc.getCreatedBy());
+            record.setName(hbyc.getUpdatedBy());
+            record.setStartDate(hbyc.getCreatedDate());
+            record.setEndDate(hbyc.getCreatedDate());
+            record.setUpdatedDate(hbyc.getCreatedDate());
+            record.setUpdatedBy(hbyc.getCreatedBy());
+            record.setBenId(benId);
+            record.setAshaId(hbyc.getUserId());
             record.setAmount(Long.valueOf(immunizationActivity.getRate()));
             recordRepo.save(record);
         }

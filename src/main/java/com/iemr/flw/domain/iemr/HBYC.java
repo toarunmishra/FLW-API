@@ -16,6 +16,9 @@ public class HBYC {
     @Column(name = "ben_id")
     private Long benId;
 
+    @Column(name = "user_id")
+    private Integer userId;
+
     @Column(name = "sub_center_name")
     private String subcenterName;
 

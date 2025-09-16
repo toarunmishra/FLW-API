@@ -137,7 +137,7 @@ public class DeathReportsServiceImpl implements DeathReportsService {
             Long benId = beneficiaryRepo.getBenIdFromRegID(cdr.getBenId()).longValue();
             Integer userId = userRepo.getUserIdByName(cdr.getCreatedBy());
             IncentiveActivity immunizationActivity =
-                    incentivesRepo.findIncentiveMasterByNameAndGroup("DEATH_REPORTING", "CDR");
+                    incentivesRepo.findIncentiveMasterByNameAndGroup("CH_CHILD_DEATH", "CHILD HEALTH");
             createIncentiveRecord(cdr,benId,userId,immunizationActivity);
         });
     }
@@ -164,7 +164,7 @@ public class DeathReportsServiceImpl implements DeathReportsService {
             record.setActivityId(immunizationActivity.getId());
             record.setCreatedDate(cdr.getCreatedDate());
             record.setCreatedBy(cdr.getCreatedBy());
-            record.setName(immunizationActivity.getName());
+            record.setName(cdr.getCreatedBy());
             record.setStartDate(cdr.getCreatedDate());
             record.setEndDate(cdr.getCreatedDate());
             record.setUpdatedDate(cdr.getCreatedDate());
@@ -184,7 +184,7 @@ public class DeathReportsServiceImpl implements DeathReportsService {
             record.setActivityId(immunizationActivity.getId());
             record.setCreatedDate(mdsr.getCreatedDate());
             record.setCreatedBy(mdsr.getCreatedBy());
-            record.setName(immunizationActivity.getName());
+            record.setName(mdsr.getCreatedBy());
             record.setStartDate(mdsr.getCreatedDate());
             record.setEndDate(mdsr.getCreatedDate());
             record.setUpdatedDate(mdsr.getCreatedDate());
